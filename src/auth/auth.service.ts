@@ -14,5 +14,8 @@ export class AuthService {
     @Inject(authConfig.KEY) private config: ConfigType<typeof authConfig>,
   ) {}
 
-  
+  login(user: User) {
+    const payload = { ...user };
+    console.log(payload, 'payload');
+  }
 }

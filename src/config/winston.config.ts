@@ -37,7 +37,7 @@ winston.addColors(color);
 const customLogFormat = combine(
   timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
   printf(aLog => {
-    if (aLog.stack) {
+    if (aLog.stack && aLog.stack[0] !== undefined) {
       return `[${aLog.timestamp}] [${aLog.level}]: ${aLog.message} \n ${aLog.stack}`;
     }
     return `[${aLog.timestamp}] [${aLog.level}]: ${aLog.message}`;
@@ -56,15 +56,15 @@ const transports = [
   new winston.transports.Console(consoleOnlyOptions),
   new winston.transports.File({
     level: 'error',
-    dirname: path.join(__dirname, logDir),
-    filename: 'nest-error.log',
+    filename: 'storage/log/nest-error.log',
     maxsize: 5 * 1024 * 1024,
+    tailable: true,
   }),
   new winston.transports.File({
-    level: 'debug',
-    dirname: path.join(__dirname, logDir),
-    filename: 'nest-all.log',
+    level: 'info',
+    filename: 'storage/log/nest-all.log',
     maxsize: 5 * 1024 * 1024,
+    tailable: true,
   }),
 ];
 

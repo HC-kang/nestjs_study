@@ -13,7 +13,6 @@ import * as path from 'path';
     AuthModule,
     ConfigModule.forRoot({
       envFilePath: [path.join(__dirname, `config/env/.env.${process.env.NODE_ENV}`)],
-      // envFilePath: [`${__dirname}/config/env/.env.${process.env.NODE_ENV}`],
       load: [emailConfig, authConfig],
       isGlobal: true,
       validationSchema,

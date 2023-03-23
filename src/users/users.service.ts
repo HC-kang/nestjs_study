@@ -1,26 +1,35 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import * as strings from '../common/strings';
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
+  createUser(createUserDto: CreateUserDto) {
+    const { name, email, password } = createUserDto;
+    // const userExists = this.checkUserExists(email);
+    const userExists = true;
+    if (userExists) {
+      throw new UnprocessableEntityException(
+        strings.USER_ALREADY_EXISTS,
+      )
+    }
     return 'This action adds a new user';
   }
 
-  findAll() {
+  findAllUsers() {
     return `This action returns all users`;
   }
 
-  findOne(id: number) {
+  findOneUser(id: number) {
     return `This action returns a #${id} user`;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
+  updateUser(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
   }
 
-  remove(id: number) {
+  removeUser(id: number) {
     return `This action removes a #${id} user`;
   }
 }
