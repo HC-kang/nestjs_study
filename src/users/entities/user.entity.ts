@@ -1,5 +1,11 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
+export interface UserWithoutPassword {
+  id: string;
+  name: string;
+  email: string;
+}
+
 @Entity('User')
 export class UserEntity {
   @PrimaryColumn()
@@ -16,4 +22,9 @@ export class UserEntity {
 
   @Column({ length: 60 })
   signupVerifyToken: string;
+
+  public toResponseObject(): UserWithoutPassword {
+    const { id, name, email } = this;
+    return { id, name, email };
+  }
 }

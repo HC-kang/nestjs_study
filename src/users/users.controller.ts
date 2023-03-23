@@ -11,7 +11,7 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserEntity } from './entities/user.entity';
+import { UserEntity, UserWithoutPassword } from './entities/user.entity';
 
 @Controller('users')
 export class UsersController {
@@ -26,12 +26,12 @@ export class UsersController {
   }
 
   @Get()
-  async findAllUsers(): Promise<UserEntity[]> {
+  async findAllUsers(): Promise<UserWithoutPassword[]> {
     return await this.usersService.findAllUsers();
   }
 
   @Get(':userId')
-  async findOneUser(@Param('userId') userId: string) {
+  async findOneUser(@Param('userId') userId: string): Promise<UserWithoutPassword> {
     return await this.usersService.findOneUser(userId);
   }
 

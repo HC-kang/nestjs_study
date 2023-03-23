@@ -4,8 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import * as strings from '../common/strings';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserEntity } from './entities/user.entity';
-import { UserInfo } from './userInfo';
+import { UserEntity, UserWithoutPassword } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
@@ -24,18 +23,18 @@ export class UsersService {
     return 'This action adds a new user';
   }
 
-  async findAllUsers(): Promise<UserEntity[]> {
-    const user = await this.usersRepository.find();
-    return user;
+  async findAllUsers(): Promise<UserWithoutPassword[]> {
+    const users = await this.usersRepository.find();
+    let result = users.map(user => user.toResponseObject());
+    return result;
   }
 
-  async findOneUser(userId: string): Promise<UserInfo> {
+  async findOneUser(userId: string): Promise<UserWithoutPassword> {
     this.logger.log('findAllUsers called')
     const user = await this.usersRepository.findOne({
       where: { id: userId },
     });
-    // user.password = undefined;
-    return user;
+    return user.toResponseObject();
   }
 
   updateUser(userId: string, updateUserDto: UpdateUserDto) {
