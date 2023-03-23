@@ -11,6 +11,7 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserEntity } from './entities/user.entity';
 
 @Controller('users')
 export class UsersController {
@@ -25,22 +26,22 @@ export class UsersController {
   }
 
   @Get()
-  findAllUsers() {
-    return this.usersService.findAllUsers();
+  async findAllUsers(): Promise<UserEntity[]> {
+    return await this.usersService.findAllUsers();
   }
 
-  @Get(':id')
-  findOneUser(@Param('id') id: string) {
-    return this.usersService.findOneUser(+id);
+  @Get(':userId')
+  async findOneUser(@Param('userId') userId: string) {
+    return await this.usersService.findOneUser(userId);
   }
 
-  @Patch(':id')
-  updateUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.updateUser(+id, updateUserDto);
+  @Patch(':userId')
+  updateUser(@Param('userId') userId: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.updateUser(userId, updateUserDto);
   }
 
-  @Delete(':id')
-  removeUser(@Param('id') id: string) {
-    return this.usersService.removeUser(+id);
+  @Delete(':userId')
+  removeUser(@Param('userId') userId: string) {
+    return this.usersService.removeUser(userId);
   }
 }
