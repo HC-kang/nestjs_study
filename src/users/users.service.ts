@@ -1,4 +1,8 @@
-import { Injectable, Logger, UnprocessableEntityException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as strings from '../common/strings';
@@ -14,9 +18,10 @@ export class UsersService {
     private usersRepository: Repository<UserEntity>,
   ) {}
 
-  createUser(createUserDto: CreateUserDto) {
+  async createUser(createUserDto: CreateUserDto) {
     const { name, email, password } = createUserDto;
-    const userExists = this.checkUserExists(email);
+    const userExists = await this.checkUserExists(email);
+    this.logger.log(`userExists: ${userExists}`);
     if (userExists) {
       throw new UnprocessableEntityException(strings.USER_ALREADY_EXISTS);
     }
@@ -25,12 +30,11 @@ export class UsersService {
 
   async findAllUsers(): Promise<UserWithoutPassword[]> {
     const users = await this.usersRepository.find();
-    let result = users.map(user => user.toResponseObject());
+    const result = users.map((user) => user.toResponseObject());
     return result;
   }
 
   async findOneUser(userId: string): Promise<UserWithoutPassword> {
-    this.logger.log('findAllUsers called')
     const user = await this.usersRepository.findOne({
       where: { id: userId },
     });

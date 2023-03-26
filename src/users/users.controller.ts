@@ -11,18 +11,16 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserEntity, UserWithoutPassword } from './entities/user.entity';
+import { UserWithoutPassword } from './entities/user.entity';
 
 @Controller('users')
 export class UsersController {
   private readonly logger = new Logger(UsersController.name);
-  constructor(
-    private readonly usersService: UsersService,
-  ) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  createUser(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.createUser(createUserDto);
+  async createUser(@Body() createUserDto: CreateUserDto) {
+    return await this.usersService.createUser(createUserDto);
   }
 
   @Get()
@@ -31,12 +29,17 @@ export class UsersController {
   }
 
   @Get(':userId')
-  async findOneUser(@Param('userId') userId: string): Promise<UserWithoutPassword> {
+  async findOneUser(
+    @Param('userId') userId: string,
+  ): Promise<UserWithoutPassword> {
     return await this.usersService.findOneUser(userId);
   }
 
   @Patch(':userId')
-  updateUser(@Param('userId') userId: string, @Body() updateUserDto: UpdateUserDto) {
+  updateUser(
+    @Param('userId') userId: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
     return this.usersService.updateUser(userId, updateUserDto);
   }
 
