@@ -1,10 +1,7 @@
 import * as winston from 'winston';
 import { WinstonModule } from 'nest-winston';
-import * as path from 'path';
 
 const { combine, timestamp, printf, colorize } = winston.format;
-
-const logDir = 'storage/logs';
 
 const levels = {
   error: 0,
