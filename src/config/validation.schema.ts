@@ -10,7 +10,7 @@ export const validationSchema = Joi.object({
   DATABASE_NAME: Joi.string().required(),
   DATABASE_USERNAME: Joi.string().required(),
   DATABASE_PASSWORD: Joi.string().required(),
-  DATABASE_SYNCHRONIZE: Joi.boolean().required(),
+  // DATABASE_SYNCHRONIZE: Joi.boolean().required(),
 
   // Email
   EMAIL_SERVICE: Joi.string().required(),

@@ -6,7 +6,7 @@ export interface UserWithoutPassword {
   email: string;
 }
 
-@Entity('User')
+@Entity('users')
 export class UserEntity {
   @PrimaryColumn()
   id: string;
