@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http.exception.filter';
+import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { setupApiAuth, setupSwagger, CustomLogger } from './config';
 
 async function bootstrap() {
@@ -10,6 +11,7 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
   app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalInterceptors(new TransformInterceptor());
 
   setupApiAuth(app);
   setupSwagger(app);

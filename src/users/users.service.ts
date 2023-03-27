@@ -2,6 +2,7 @@ import {
   Injectable,
   Logger,
   NotFoundException,
+  UnauthorizedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -22,46 +23,69 @@ export class UsersService {
     private readonly authService: AuthService,
   ) {}
 
-  async createUser(name: string, email: string, password: string) {
-    const userExists = await this.checkUserExists(email);
-    this.logger.log(`userExists: ${userExists}`);
-    if (userExists) {
-      throw new UnprocessableEntityException(Strings.USER_ALREADY_EXISTS);
+  async createUser(name: string, email: string, password: string): Promise<UserWithoutPassword> {
+    try {
+      const userExists = await this.checkUserExists(email);
+      this.logger.log(`userExists: ${userExists}`);
+      if (userExists) {
+        throw new UnprocessableEntityException(Strings.USER_ALREADY_EXISTS);
+      }
+
+      const signupVerifyToken = uuid.v1();
+      const user = await this.saveUser(name, email, password, signupVerifyToken);
+      await this.sendMemberJoinEmail(email, signupVerifyToken);
+      return user;
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
     }
-
-    const signupVerifyToken = uuid.v1();
-
-    await this.saveUser(name, email, password, signupVerifyToken);
-    await this.sendMemberJoinEmail(email, signupVerifyToken);
   }
 
-  async login(email: string, password: string) {
-    const user = await this.usersRepository.findOne({
-      where: { email },
-    });
+  async login(email: string, password: string): Promise<string> {
+    try {
+      const user = await this.usersRepository.findOne({
+        where: { email },
+      });
 
-    if (!user) {
-      throw new NotFoundException(Strings.USER_NOT_FOUND_EXCEPTION);
+      if (!user) {
+        throw new UnauthorizedException(Strings.USER_NOT_FOUND_EXCEPTION);
+      }
+      if (!(await this.authService.comparePasswords(password, user.password))) {
+        throw new NotFoundException(Strings.PASSWORD_NOT_MATCH_EXCEPTION);
+      }
+
+      return this.authService.login({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      });
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
     }
-
-    return this.authService.login({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-    })
   }
 
   async findAllUsers(): Promise<UserWithoutPassword[]> {
-    const users = await this.usersRepository.find();
-    const result = users.map((user) => user.toResponseObject());
-    return result;
+    try {
+      const users = await this.usersRepository.find();
+      const result = users.map((user) => user.toUserWithoutPassword());
+      return result;
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
   }
 
   async findOneUser(userId: string): Promise<UserWithoutPassword> {
-    const user = await this.usersRepository.findOne({
-      where: { id: userId },
-    });
-    return user.toResponseObject();
+    try {
+      const user = await this.usersRepository.findOne({
+        where: { id: userId },
+      });
+      return user.toUserWithoutPassword();
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
   }
 
   updateUser(userId: string, updateUserDto: UpdateUserDto) {
@@ -73,10 +97,15 @@ export class UsersService {
   }
 
   private async checkUserExists(emailAddress: string) {
-    const user = await this.usersRepository.findOne({
-      where: { email: emailAddress },
-    });
-    return user !== null;
+    try {
+      const user = await this.usersRepository.findOne({
+        where: { email: emailAddress },
+      });
+      return user !== null;
+    } catch (error) {
+      this.logger.error(error);
+      throw new UnprocessableEntityException(Strings.USER_SAVE_FAILED);
+    }
   }
 
   private async saveUser(
@@ -84,21 +113,32 @@ export class UsersService {
     emailAddress: string,
     password: string,
     signupVerifyToken: string,
-  ) {
-    const user = new UserEntity();
-    user.id = ulid();
-    user.name = name;
-    user.email = emailAddress;
-    user.password = password;
-    user.signupVerifyToken = signupVerifyToken;
-    await this.usersRepository.save(user);
+  ): Promise<UserWithoutPassword> {
+    try {
+      const user = new UserEntity();
+      user.id = ulid();
+      user.name = name;
+      user.email = emailAddress;
+      user.password = await this.authService.hashPassword(password);
+      user.signupVerifyToken = signupVerifyToken;
+      await this.usersRepository.save(user);
+      return user.toUserWithoutPassword();
+    } catch (error) {
+      this.logger.error(error);
+      throw new UnprocessableEntityException(Strings.USER_SAVE_FAILED);
+    }
   }
 
   private async sendMemberJoinEmail(
     emailAddress: string,
     signupVerifyToken: string,
   ) {
-    console.log('email send');
-    // await this.emailService.sendMemberJoinEmail(emailAddress, signupVerifyToken)
+    try {
+      console.log('email send');
+      // await this.emailService.sendMemberJoinEmail(emailAddress, signupVerifyToken)
+    } catch (error) {
+      this.logger.error(error);
+      throw new UnprocessableEntityException(Strings.EMAIL_SEND_FAILED);
+    }
   }
 }

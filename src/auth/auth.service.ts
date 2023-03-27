@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import authConfig from 'src/config/auth.config';
 import * as jwt from 'jsonwebtoken';
+import * as bcrypt from 'bcrypt';
 
 interface User {
   id: string;
@@ -15,12 +16,15 @@ export class AuthService {
     @Inject(authConfig.KEY) private config: ConfigType<typeof authConfig>,
   ) {}
 
-  // login(user: User) {
-  //   const payload = { ...user };
-  //   console.log(payload, 'payload');
-  // }
+  async hashPassword(password: string): Promise<string> {
+    return await bcrypt.hash(password, 12);
+  }
 
-  login(user: User) {
+  async comparePasswords(password: string, hashedPassword: string): Promise<boolean> {
+    return await bcrypt.compare(password, hashedPassword);
+  }
+
+  login(user: User): string {
     const payload = { ...user };
     console.log(payload, 'payload');
 

@@ -17,13 +17,13 @@ export class UserEntity {
   @Column({ length: 60 })
   email: string;
 
-  @Column({ length: 30 })
+  @Column({ length: 60 })
   password: string;
 
   @Column({ length: 60 })
   signupVerifyToken: string;
 
-  public toResponseObject(): UserWithoutPassword {
+  public toUserWithoutPassword(): UserWithoutPassword {
     const { id, name, email } = this;
     return { id, name, email };
   }
