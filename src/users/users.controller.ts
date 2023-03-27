@@ -12,8 +12,9 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserWithoutPassword } from './entities/user.entity';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOperation, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('users')
 @Controller('users')
 export class UsersController {
   private readonly logger = new Logger(UsersController.name);
@@ -21,6 +22,16 @@ export class UsersController {
 
   @ApiOperation({
     summary: 'Create a new user',
+  })
+  @ApiProperty({
+    type: CreateUserDto,
+  })
+  @ApiCreatedResponse({
+    description: 'The user has been successfully created.',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request.',
   })
   @Post()
   async createUser(@Body() createUserDto: CreateUserDto) {
