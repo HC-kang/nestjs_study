@@ -3,6 +3,8 @@ import { ConfigType } from '@nestjs/config';
 import authConfig from 'src/config/auth.config';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { TokenPayloadDto } from './dto/token-payload.dto';
+import { TokenType, RoleType } from '../common/constants';
 
 interface User {
   id: string;
@@ -25,14 +27,17 @@ export class AuthService {
     return await bcrypt.compare(password, hashedPassword);
   }
 
-  login(user: User): string {
-    const payload = { ...user };
-    console.log(payload, 'payload');
-
-    return jwt.sign(payload, this.config.jwtSecret, {
-      expiresIn: '1d',
-      audience: 'https://example.com',
-      issuer: 'https://example.com',
+  async createAccessToken(data: {
+    role: RoleType;
+    userId: string;
+  }): Promise<TokenPayloadDto> {
+    return new TokenPayloadDto({
+      expiresIn: 3600,
+      accessToken: await this.jwtService.signAsync({
+        userId: data.userId,
+        type: TokenType.ACCESS_TOKEN,
+        role: data.role,
+      }),
     });
   }
 }

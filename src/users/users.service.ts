@@ -6,13 +6,14 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Strings } from '../common/constants';
+import { RoleType, Strings } from '../common/constants';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity, UserWithoutPassword } from './entities/user.entity';
 import * as uuid from 'uuid';
 import { ulid } from 'ulid';
 import { AuthService } from 'src/auth/auth.service';
+import { TokenPayloadDto } from 'src/auth/dto/token-payload.dto';
 
 @Injectable()
 export class UsersService {
@@ -50,22 +51,25 @@ export class UsersService {
     }
   }
 
-  async login(email: string, password: string): Promise<string> {
+  async login(email: string, password: string): Promise<TokenPayloadDto> {
     try {
       const user = await this.usersRepository.findOne({
         where: { email },
       });
 
-      if (!user)
+      if (!user) {
         throw new UnauthorizedException(Strings.USER_NOT_FOUND_EXCEPTION);
-      if (!(await this.authService.comparePasswords(password, user.password)))
+      }
+      if (!(await this.authService.comparePasswords(password, user.password))) {
         throw new NotFoundException(Strings.PASSWORD_NOT_MATCH_EXCEPTION);
+      }
 
-      return this.authService.login({
-        id: user.id,
-        name: user.name,
-        email: user.email,
+      const token = await this.authService.createAccessToken({
+        role: RoleType.USER,
+        userId: user.id,
       });
+
+      return token
     } catch (error) {
       this.logger.error(error);
       throw error;
