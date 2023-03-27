@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import * as strings from '../common/strings';
+import { Strings } from '../common/constants';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity, UserWithoutPassword } from './entities/user.entity';
@@ -23,7 +23,7 @@ export class UsersService {
     const userExists = await this.checkUserExists(email);
     this.logger.log(`userExists: ${userExists}`);
     if (userExists) {
-      throw new UnprocessableEntityException(strings.USER_ALREADY_EXISTS);
+      throw new UnprocessableEntityException(Strings.USER_ALREADY_EXISTS);
     }
     return 'This action adds a new user';
   }

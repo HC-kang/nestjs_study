@@ -8,10 +8,6 @@
       {
         "include": "./config/env/.env.*",
         "outDir": "./dist"
-      },
-      {
-        "include": "./common/strings.js",
-        "outDir": "./dist"
       }
     ]
   }
