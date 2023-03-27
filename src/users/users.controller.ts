@@ -13,6 +13,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserWithoutPassword } from './entities/user.entity';
 import { ApiCreatedResponse, ApiOperation, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -20,6 +21,7 @@ export class UsersController {
   private readonly logger = new Logger(UsersController.name);
   constructor(private readonly usersService: UsersService) {}
 
+  @Post()
   @ApiOperation({
     summary: 'Create a new user',
   })
@@ -33,33 +35,42 @@ export class UsersController {
     status: 400,
     description: 'Bad request.',
   })
-  @Post()
   async createUser(@Body() createUserDto: CreateUserDto) {
-    return await this.usersService.createUser(createUserDto);
+    const { name, email, password } = createUserDto;
+    return await this.usersService.createUser(name, email, password);
   }
 
+  @Post('/login')
+  @ApiOperation({
+    summary: 'Login a user',
+  })
+  async loginUser(@Body() loginUserDto: LoginUserDto) {
+    const { email, password } = loginUserDto;
+    return await this.usersService.login(email, password);
+  }
+
+  @Get()
   @ApiOperation({
     summary: 'Get all users',
   })
-  @Get()
   async findAllUsers(): Promise<UserWithoutPassword[]> {
     return await this.usersService.findAllUsers();
   }
 
+  @Get(':userId')
   @ApiOperation({
     summary: 'Get a user by id',
   })
-  @Get(':userId')
   async findOneUser(
     @Param('userId') userId: string,
   ): Promise<UserWithoutPassword> {
     return await this.usersService.findOneUser(userId);
   }
 
+  @Patch(':userId')
   @ApiOperation({
     summary: 'Update a user by id',
   })
-  @Patch(':userId')
   updateUser(
     @Param('userId') userId: string,
     @Body() updateUserDto: UpdateUserDto,
@@ -67,10 +78,10 @@ export class UsersController {
     return this.usersService.updateUser(userId, updateUserDto);
   }
 
+  @Delete(':userId')
   @ApiOperation({
     summary: 'Delete a user by id',
   })
-  @Delete(':userId')
   removeUser(@Param('userId') userId: string) {
     return this.usersService.removeUser(userId);
   }
