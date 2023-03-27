@@ -4,7 +4,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import emailConfig from './config/email.config';
 import authConfig from './config/auth.config';
-import { validationSchema } from './config/validationSchema';
+import { validationSchema } from './config';
 import * as path from 'path';
 import { TypeOrmModule } from '@nestjs/typeorm';
 

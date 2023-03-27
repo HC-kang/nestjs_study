@@ -14,9 +14,10 @@ const levels = {
 };
 
 const logLevel = () => {
-  const isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
+  const isDevelopment =
+    !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
   return isDevelopment ? 'debug' : 'http';
-}
+};
 
 const color = {
   error: 'red',
@@ -26,28 +27,26 @@ const color = {
   verbose: 'cyan',
   debug: 'white',
   silly: 'gray',
-}
+};
 
 // Add colors to the logger
 winston.addColors(color);
 
 const customLogFormat = combine(
   timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-  printf(aLog => {
+  printf((aLog) => {
     if (aLog.stack && aLog.stack[0] !== undefined) {
       return `[${aLog.timestamp}] [${aLog.level}]: ${aLog.message} \n ${aLog.stack}`;
     }
     return `[${aLog.timestamp}] [${aLog.level}]: ${aLog.message}`;
-  })
-)
+  }),
+);
 
 const consoleOnlyOptions = {
   handleExceptions: true,
   level: process.env.NODE_ENV === 'production' ? 'error' : 'silly',
-  format: combine(
-    colorize({ all: true }),
-  )
-}
+  format: combine(colorize({ all: true })),
+};
 
 const transports = [
   new winston.transports.Console(consoleOnlyOptions),
@@ -70,4 +69,4 @@ export const CustomLogger = WinstonModule.createLogger({
   levels,
   format: customLogFormat,
   transports,
-})
+});
