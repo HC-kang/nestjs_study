@@ -10,7 +10,7 @@ import { AuthService } from './auth.service';
     }),
     JwtModule.registerAsync({
       useFactory: () => ({
-        secret: 'secret',
+        secret: process.env.JWT_SECRET,
         // privateKey: 'key',
         // publicKey: 'key',
         signOptions: {
