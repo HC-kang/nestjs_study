@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import authConfig from 'src/config/auth.config';
-import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 interface User {
   id: string;
@@ -14,6 +14,7 @@ interface User {
 export class AuthService {
   constructor(
     @Inject(authConfig.KEY) private config: ConfigType<typeof authConfig>,
+    private jwtService: JwtService,
   ) {}
 
   async hashPassword(password: string): Promise<string> {

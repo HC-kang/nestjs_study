@@ -23,7 +23,11 @@ export class UsersService {
     private readonly authService: AuthService,
   ) {}
 
-  async createUser(name: string, email: string, password: string): Promise<UserWithoutPassword> {
+  async createUser(
+    name: string,
+    email: string,
+    password: string,
+  ): Promise<UserWithoutPassword> {
     try {
       const userExists = await this.checkUserExists(email);
       this.logger.log(`userExists: ${userExists}`);
@@ -32,7 +36,12 @@ export class UsersService {
       }
 
       const signupVerifyToken = uuid.v1();
-      const user = await this.saveUser(name, email, password, signupVerifyToken);
+      const user = await this.saveUser(
+        name,
+        email,
+        password,
+        signupVerifyToken,
+      );
       await this.sendMemberJoinEmail(email, signupVerifyToken);
       return user;
     } catch (error) {
@@ -47,12 +56,10 @@ export class UsersService {
         where: { email },
       });
 
-      if (!user) {
+      if (!user)
         throw new UnauthorizedException(Strings.USER_NOT_FOUND_EXCEPTION);
-      }
-      if (!(await this.authService.comparePasswords(password, user.password))) {
+      if (!(await this.authService.comparePasswords(password, user.password)))
         throw new NotFoundException(Strings.PASSWORD_NOT_MATCH_EXCEPTION);
-      }
 
       return this.authService.login({
         id: user.id,
