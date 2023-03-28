@@ -7,15 +7,17 @@ import {
   Param,
   Delete,
   Logger,
+  Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserWithoutPassword } from './entities/user.entity';
+import { UserEntity, UserWithoutPassword } from './entities/user.entity';
 import { ApiCreatedResponse, ApiOperation, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LoginUserDto } from './dto/login-user.dto';
-import { Auth } from 'src/common/decorators/auth.decorator';
+import { Auth } from 'src/common/decorators';
 import { RoleType } from 'src/common/constants';
+import { AuthUser } from 'src/common/decorators';
 
 @ApiTags('users')
 @Controller('users')
@@ -56,8 +58,8 @@ export class UsersController {
   @ApiOperation({
     summary: 'Get the current user',
   })
-  async getMe() {
-    return await this.usersService.getMe();
+  async me(@AuthUser() user: UserEntity) {
+    return await this.usersService.findOneUser(user.id);
   }
 
   @Get()
