@@ -47,7 +47,6 @@ export class AuthService {
   verifyAccessToken(token: string): Promise<Boolean> {
     try {
       const result = this.jwtService.verify(token);
-      console.log(result);
       return result;
     } catch (error) {
       throw new UnauthorizedException(Strings.UNAUTHORIZED_EXCEPTION);

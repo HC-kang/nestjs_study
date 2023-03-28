@@ -76,19 +76,6 @@ export class UsersService {
     }
   }
 
-  async getMe(): Promise<UserWithoutPassword> {
-    try {
-      const user = await this.usersRepository.findOne({
-        where: { id: '01GWH7DDRNMGHVSNDW44R54ZTT' },
-      });
-      return user.toUserWithoutPassword();
-    } catch (error) {
-      this.logger.error(error);
-      console.log('getme');
-      throw error;
-    }
-  }
-
   async findAllUsers(): Promise<UserWithoutPassword[]> {
     try {
       const users = await this.usersRepository.find();
