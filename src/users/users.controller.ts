@@ -14,6 +14,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UserWithoutPassword } from './entities/user.entity';
 import { ApiCreatedResponse, ApiOperation, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LoginUserDto } from './dto/login-user.dto';
+import { Auth } from 'src/common/decorators/auth.decorator';
+import { RoleType } from 'src/common/constants';
 
 @ApiTags('users')
 @Controller('users')
@@ -47,6 +49,15 @@ export class UsersController {
   async loginUser(@Body() loginUserDto: LoginUserDto) {
     const { email, password } = loginUserDto;
     return await this.usersService.login(email, password);
+  }
+
+  @Get('/me')
+  @Auth([RoleType.ADMIN, RoleType.USER])
+  @ApiOperation({
+    summary: 'Get the current user',
+  })
+  async getMe() {
+    return await this.usersService.getMe();
   }
 
   @Get()

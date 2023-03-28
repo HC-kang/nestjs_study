@@ -1,5 +1,11 @@
 export enum Strings {
     /**
+     * Common
+     */
+    'INVALID_REQUEST'        = '잘못된 요청입니다.',
+    'UNAUTHORIZED_EXCEPTION' = '권한이 없습니다.',
+
+    /**
      * User
      */
     'USER_ALREADY_EXISTS'          = '해당 이메일로는 가입할 수 없습니다.',

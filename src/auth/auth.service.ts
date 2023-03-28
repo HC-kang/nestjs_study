@@ -1,10 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import authConfig from 'src/config/auth.config';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { TokenPayloadDto } from './dto/token-payload.dto';
-import { TokenType, RoleType } from '../common/constants';
+import { TokenType, RoleType, Strings } from '../common/constants';
 
 interface User {
   id: string;
@@ -23,7 +23,10 @@ export class AuthService {
     return await bcrypt.hash(password, 12);
   }
 
-  async comparePasswords(password: string, hashedPassword: string): Promise<boolean> {
+  async comparePasswords(
+    password: string,
+    hashedPassword: string,
+  ): Promise<boolean> {
     return await bcrypt.compare(password, hashedPassword);
   }
 
@@ -39,5 +42,15 @@ export class AuthService {
         role: data.role,
       }),
     });
+  }
+
+  verifyAccessToken(token: string): Promise<Boolean> {
+    try {
+      const result = this.jwtService.verify(token);
+      console.log(result);
+      return result;
+    } catch (error) {
+      throw new UnauthorizedException(Strings.UNAUTHORIZED_EXCEPTION);
+    }
   }
 }

@@ -1,3 +1,4 @@
+import { RoleType } from 'src/common/constants';
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 export interface UserWithoutPassword {
@@ -14,7 +15,7 @@ export class UserEntity {
   @Column({ length: 30 })
   name: string;
 
-  @Column({ length: 60 })
+  @Column({ unique: true, length: 60 })
   email: string;
 
   @Column({ length: 60 })
@@ -22,6 +23,12 @@ export class UserEntity {
 
   @Column({ length: 60 })
   signupVerifyToken: string;
+
+  @Column({ type: 'enum', enum: RoleType, default: RoleType.USER })
+  role: RoleType;
+
+  @Column({ nullable: true })
+  phone?: string;
 
   public toUserWithoutPassword(): UserWithoutPassword {
     const { id, name, email } = this;
