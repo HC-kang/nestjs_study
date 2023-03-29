@@ -9,6 +9,7 @@ import * as path from 'path';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmailModule } from './email/email.module';
 import { BatchModule } from './batch/batch.module';
+import { CommandModule } from './console/command/command.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { BatchModule } from './batch/batch.module';
     }),
     EmailModule,
     BatchModule,
+    CommandModule,
   ],
   controllers: [],
   providers: [],
