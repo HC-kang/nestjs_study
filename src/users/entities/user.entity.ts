@@ -21,8 +21,11 @@ export class UserEntity {
   @Column({ length: 60 })
   password: string;
 
-  @Column({ length: 60 })
+  @Column({ nullable: true, length: 60 })
   signupVerifyToken: string;
+
+  @Column({ nullable: true, default: null })
+  verifiedAt?: Date;
 
   @Column({ type: 'enum', enum: RoleType, default: RoleType.USER })
   role: RoleType;

@@ -7,7 +7,8 @@ import {
   Param,
   Delete,
   Logger,
-  Req,
+  Query,
+  Res,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -18,6 +19,9 @@ import { LoginUserDto } from './dto/login-user.dto';
 import { Auth } from 'src/common/decorators';
 import { RoleType } from 'src/common/constants';
 import { AuthUser } from 'src/common/decorators';
+import { VerifyEmailDto } from './dto/verify-email.dto';
+import { TokenPayloadDto } from 'src/auth/dto/token-payload.dto';
+import { Response } from 'express';
 
 @ApiTags('users')
 @Controller('users')
@@ -42,6 +46,13 @@ export class UsersController {
   async createUser(@Body() createUserDto: CreateUserDto) {
     const { name, email, password } = createUserDto;
     return await this.usersService.createUser(name, email, password);
+  }
+
+  @Post('/email-verify')
+  async verifyEmail(@Query() dto: VerifyEmailDto, @Res() res: Response): Promise<void> {
+    const { signupVerifyToken } = dto;
+    await this.usersService.verifyEmail(signupVerifyToken)
+    return res.redirect(process.env.FRONT_LOGIN_URL);
   }
 
   @Post('/login')

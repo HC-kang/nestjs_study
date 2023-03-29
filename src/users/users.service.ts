@@ -14,6 +14,10 @@ import * as uuid from 'uuid';
 import { ulid } from 'ulid';
 import { AuthService } from 'src/auth/auth.service';
 import { TokenPayloadDto } from 'src/auth/dto/token-payload.dto';
+import { EmailService } from 'src/email/email.service';
+import { UserNotFoundException } from 'src/common/exceptions/user-not-found.exception';
+import * as http from 'http';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class UsersService {
@@ -22,6 +26,7 @@ export class UsersService {
     @InjectRepository(UserEntity)
     private usersRepository: Repository<UserEntity>,
     private readonly authService: AuthService,
+    private readonly emailService: EmailService,
   ) {}
 
   async createUser(
@@ -31,7 +36,6 @@ export class UsersService {
   ): Promise<UserWithoutPassword> {
     try {
       const userExists = await this.checkUserExists(email);
-      this.logger.log(`userExists: ${userExists}`);
       if (userExists) {
         throw new UnprocessableEntityException(Strings.USER_ALREADY_EXISTS);
       }
@@ -45,6 +49,25 @@ export class UsersService {
       );
       await this.sendMemberJoinEmail(email, signupVerifyToken);
       return user;
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
+  }
+
+  async verifyEmail(signupVerifyToken: string): Promise<void> {
+    try {
+      const user = await this.usersRepository.findOne({
+        where: { signupVerifyToken },
+      });
+
+      if (!user) {
+        throw new UserNotFoundException();
+      }
+
+      // user.signupVerifyToken = null;
+      user.verifiedAt = new Date();
+      await this.usersRepository.save(user);
     } catch (error) {
       this.logger.error(error);
       throw error;
@@ -69,7 +92,7 @@ export class UsersService {
         userId: user.id,
       });
 
-      return token
+      return token;
     } catch (error) {
       this.logger.error(error);
       throw error;
@@ -145,8 +168,10 @@ export class UsersService {
     signupVerifyToken: string,
   ) {
     try {
-      console.log('email send');
-      // await this.emailService.sendMemberJoinEmail(emailAddress, signupVerifyToken)
+      await this.emailService.sendMemberJoinVerification(
+        emailAddress,
+        signupVerifyToken,
+      );
     } catch (error) {
       this.logger.error(error);
       throw new UnprocessableEntityException(Strings.EMAIL_SEND_FAILED);

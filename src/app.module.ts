@@ -7,6 +7,7 @@ import authConfig from './config/auth.config';
 import { validationSchema } from './config';
 import * as path from 'path';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         migrationsTableName: 'migrations',
       }),
     }),
+    EmailModule,
   ],
   controllers: [],
   providers: [],
