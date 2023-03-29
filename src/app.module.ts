@@ -8,6 +8,7 @@ import { validationSchema } from './config';
 import * as path from 'path';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmailModule } from './email/email.module';
+import { BatchModule } from './batch/batch.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { EmailModule } from './email/email.module';
       }),
     }),
     EmailModule,
+    BatchModule,
   ],
   controllers: [],
   providers: [],
