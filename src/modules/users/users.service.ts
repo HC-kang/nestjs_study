@@ -12,12 +12,10 @@ import { Repository } from 'typeorm';
 import { UserEntity, UserWithoutPassword } from './entities/user.entity';
 import * as uuid from 'uuid';
 import { ulid } from 'ulid';
-import { AuthService } from 'src/modules/auth/auth.service';
-import { TokenPayloadDto } from 'src/modules/auth/dto/token-payload.dto';
-import { EmailService } from 'src/email/email.service';
-import { UserNotFoundException } from 'src/common/exceptions/user-not-found.exception';
-import * as http from 'http';
-import { Observable } from 'rxjs';
+import { AuthService } from '../../modules/auth/auth.service';
+import { TokenPayloadDto } from '../../modules/auth/dto/token-payload.dto';
+import { EmailService } from '../../email/email.service';
+import { UserNotFoundException } from '../../common/exceptions/user-not-found.exception';
 
 @Injectable()
 export class UsersService {

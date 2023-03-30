@@ -22,7 +22,7 @@ export class HealthCheckController {
     return this.health.check([
       () => this.http.pingCheck('nestjs-docs', 'https://docs.nestjs.com'),
       () => this.db.pingCheck('database', { timeout: 1500 }),
-      // () => this.sampleHealthIndicator.isHealthy('sample'),
+      () => this.sampleHealthIndicator.isHealthy('sample'),
     ]);
   }
 }

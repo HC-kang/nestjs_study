@@ -2,7 +2,7 @@ import Mail = require('nodemailer/lib/mailer');
 import * as nodemailer from 'nodemailer';
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
-import emailConfig from 'src/config/email.config';
+import emailConfig from '../config/email.config';
 
 @Injectable()
 export class EmailService {
@@ -14,8 +14,8 @@ export class EmailService {
     this.transporter = nodemailer.createTransport({
       service: config.service,
       auth: {
-        user: config.auth.user,
-        pass: config.auth.pass,
+        user: config.auth?.user || 'user', // TODO: remove default value
+        pass: config.auth?.pass || 'pass', // TODO: remove default value
       },
     });
   }

@@ -16,11 +16,9 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEntity, UserWithoutPassword } from './entities/user.entity';
 import { ApiCreatedResponse, ApiOperation, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LoginUserDto } from './dto/login-user.dto';
-import { Auth } from 'src/common/decorators';
-import { RoleType } from 'src/common/constants';
-import { AuthUser } from 'src/common/decorators';
+import { Auth, AuthUser } from '../../common/decorators';
+import { RoleType } from '../../common/constants';
 import { VerifyEmailDto } from './dto/verify-email.dto';
-import { TokenPayloadDto } from 'src/modules/auth/dto/token-payload.dto';
 import { Response } from 'express';
 
 @ApiTags('users')

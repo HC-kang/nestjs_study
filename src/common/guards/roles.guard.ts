@@ -2,7 +2,7 @@ import type { CanActivate, ExecutionContext } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import * as _ from 'lodash';
-import { UserEntity } from 'src/modules/users/entities/user.entity';
+import { UserEntity } from '../../modules/users/entities/user.entity';
 
 import type { RoleType } from '../constants';
 

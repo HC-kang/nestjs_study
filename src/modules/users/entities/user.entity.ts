@@ -1,4 +1,4 @@
-import { RoleType } from 'src/common/constants';
+import { RoleType } from '../../../common/constants';
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 export interface UserWithoutPassword {
