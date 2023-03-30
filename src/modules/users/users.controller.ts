@@ -20,7 +20,7 @@ import { Auth } from 'src/common/decorators';
 import { RoleType } from 'src/common/constants';
 import { AuthUser } from 'src/common/decorators';
 import { VerifyEmailDto } from './dto/verify-email.dto';
-import { TokenPayloadDto } from 'src/auth/dto/token-payload.dto';
+import { TokenPayloadDto } from 'src/modules/auth/dto/token-payload.dto';
 import { Response } from 'express';
 
 @ApiTags('users')

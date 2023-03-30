@@ -6,14 +6,14 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { RoleType, Strings } from '../common/constants';
+import { RoleType, Strings } from '../../common/constants';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity, UserWithoutPassword } from './entities/user.entity';
 import * as uuid from 'uuid';
 import { ulid } from 'ulid';
-import { AuthService } from 'src/auth/auth.service';
-import { TokenPayloadDto } from 'src/auth/dto/token-payload.dto';
+import { AuthService } from 'src/modules/auth/auth.service';
+import { TokenPayloadDto } from 'src/modules/auth/dto/token-payload.dto';
 import { EmailService } from 'src/email/email.service';
 import { UserNotFoundException } from 'src/common/exceptions/user-not-found.exception';
 import * as http from 'http';

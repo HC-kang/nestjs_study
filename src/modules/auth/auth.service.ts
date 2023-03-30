@@ -4,7 +4,7 @@ import authConfig from 'src/config/auth.config';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { TokenPayloadDto } from './dto/token-payload.dto';
-import { TokenType, RoleType, Strings } from '../common/constants';
+import { TokenType, RoleType, Strings } from '../../common/constants';
 
 interface User {
   id: string;
