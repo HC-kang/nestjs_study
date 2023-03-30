@@ -10,6 +10,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmailModule } from './email/email.module';
 import { BatchModule } from './batch/batch.module';
 import { CommandModule } from './console/command/command.module';
+import { HealthCheckModule } from './health-check/health-check.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { CommandModule } from './console/command/command.module';
     EmailModule,
     BatchModule,
     CommandModule,
+    HealthCheckModule,
   ],
   controllers: [],
   providers: [],
