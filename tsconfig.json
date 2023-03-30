@@ -19,11 +19,4 @@
     "noFallthroughCasesInSwitch": false
   },
   "include": ["src/**/*"],
-  "paths": {
-    "@core/*": [ "./src/core/*" ],
-    "@modules/*": [ "./src/modules/*" ],
-    "@shared/*": [ "./src/module/shared/*" ],
-    "@src/*": ["./src/*"],
-    "@env/*": [ "./env/*" ]
-  },
 }

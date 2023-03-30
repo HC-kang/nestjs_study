@@ -19,7 +19,7 @@ export class TaskService {
 
     this.scheduleRegistry.addCronJob(name, job);
 
-    this.logger.warn(`job ${name} added!`);
+    // this.logger.warn(`job ${name} added!`);
   }
 
   // @Cron('*/5 * * * * *', { name: 'cronTask' })

@@ -7,6 +7,11 @@ interface BasicCommandOptions {
   number?: number;
 }
 
+/**
+ * TODO: commend-nest에 대한 수정 필요
+ * - NODE_ENV 상황별 전환 가능하도록
+ * - 파라미터 전달 가능하도록
+ */
 @Command({ name: 'basic', description: 'A Parameter parse' })
 @Injectable()
 export class BasicCommand extends CommandRunner {
@@ -17,57 +22,11 @@ export class BasicCommand extends CommandRunner {
 
   async run(passedParam: string[], options?: BasicCommandOptions) {
     console.log('run command');
-    this.logger.error('hihi');
+    this.logger.error('error log');
+    this.logger.warn('warn log');
+    this.logger.log('log');
+    this.logger.verbose('verbose log');
+    this.logger.debug('debug log');
     return
-    //   if (options?.boolean !== undefined && options?.boolean !== null) {
-    //     this.runWithBoolean(passedParam, options.boolean);
-    //   } else if (options?.number) {
-    //     this.runWithNumber(passedParam, options.number);
-    //   } else if (options?.string) {
-    //     this.runWithString(passedParam, options.string);
-    //   } else {
-    //     this.runWithNone(passedParam);
-    //   }
-    // }
-
-    // @Option({
-    //   flags: '-n, --number [number]',
-    //   description: 'A basic number parser',
-    // })
-    // parseNumber(val: string): number {
-    //   return Number(val);
-    // }
-
-    // @Option({
-    //   flags: '-s, --string [string]',
-    //   description: 'A string return',
-    // })
-    // parseString(val: string): string {
-    //   return val;
-    // }
-
-    // @Option({
-    //   flags: '-b, --boolean [boolean]',
-    //   description: 'A boolean parser',
-    // })
-    // parseBoolean(val: string): boolean {
-    //   return JSON.parse(val);
-    // }
-
-    // runWithString(param: string[], option: string): void {
-    //   this.logger.log({ param, string: option });
-    // }
-
-    // runWithNumber(param: string[], option: number): void {
-    //   this.logger.log({ param, number: option });
-    // }
-
-    // runWithBoolean(param: string[], option: boolean): void {
-    //   this.logger.log({ param, boolean: option });
-    // }
-
-    // runWithNone(param: string[]): void {
-    //   this.logger.log({ param });
-    // }
   }
 }
