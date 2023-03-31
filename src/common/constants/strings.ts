@@ -17,5 +17,10 @@ export enum Strings {
      * Email
      * */
     'EMAIL_SEND_FAILED'            = '이메일 전송에 실패했습니다.',
+
+    /**
+     * UploadedFile
+     */
+    'UPLOADED_FILE_NOT_FOUND' = '업로드된 파일을 찾을 수 없습니다.',
   }
   

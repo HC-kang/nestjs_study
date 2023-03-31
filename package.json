@@ -25,6 +25,7 @@
     "command-nest": "cross-env NODE_ENV=development TS_NODE_PROJECT=./tsconfig.json ts-node -r tsconfig-paths/register ./src/main-cli.ts"
   },
   "dependencies": {
+    "@azure/storage-blob": "^12.13.0",
     "@nestjs/axios": "^2.0.0",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.3.1",
@@ -38,10 +39,12 @@
     "@nestjs/terminus": "^9.2.2",
     "@nestjs/typeorm": "^9.0.1",
     "@types/cron": "^2.0.1",
+    "@types/multer": "^1.4.7",
     "bcrypt": "^5.1.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "express-basic-auth": "^1.2.1",
+    "image-size": "^1.0.2",
     "joi": "^17.9.1",
     "mysql2": "^3.2.0",
     "nest-commander": "^3.6.1",

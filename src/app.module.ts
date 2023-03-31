@@ -11,6 +11,8 @@ import { EmailModule } from './email/email.module';
 import { BatchModule } from './batch/batch.module';
 import { CommandModule } from './console/command/command.module';
 import { HealthCheckModule } from './health-check/health-check.module';
+import { AzureBlobModule } from './modules/azure-blob/azure-blob.module';
+import { UploadedFilesModule } from './modules/uploaded-files/uploaded-files.module';
 
 @Module({
   imports: [
@@ -42,6 +44,8 @@ import { HealthCheckModule } from './health-check/health-check.module';
     BatchModule,
     CommandModule,
     HealthCheckModule,
+    AzureBlobModule,
+    UploadedFilesModule,
   ],
   controllers: [],
   providers: [],

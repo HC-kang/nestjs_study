@@ -6,6 +6,8 @@ import { AuthService } from '../auth/auth.service';
 import { UserEntity } from './entities/user.entity';
 import { UsersService } from './users.service';
 
+class MockUserEntityRepository extends Repository<UserEntity> {}
+
 describe('UsersService', () => {
   let service: UsersService;
   let fakeUsersRepository: Repository<UserEntity>;
@@ -20,9 +22,7 @@ describe('UsersService', () => {
         UsersService,
         {
           provide: getRepositoryToken(UserEntity),
-          useClass: class MockUserEntityRepository extends Repository<UserEntity> {
-
-          },
+          useClass: MockUserEntityRepository,
         },
         {
           provide: AuthService,
