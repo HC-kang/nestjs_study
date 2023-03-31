@@ -1,34 +1,39 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateUploadedFileDto } from './dto/create-uploaded-file.dto';
-import { UpdateUploadedFileDto } from './dto/update-uploaded-file.dto';
 import { UploadedFileEntity } from './entities/uploaded-file.entity';
-import * as uuid from 'uuid';
 import { Strings } from 'src/common/constants';
 import sizeOf from 'image-size';
+import { AzureBlobService } from '../azure-blob/azure-blob.service';
+import { ulid } from 'ulid';
 
 @Injectable()
 export class UploadedFilesService {
   private readonly logger = new Logger(UploadedFilesService.name);
+  private readonly containerName = process.env.AZURE_STORAGE_CONTAINER;
   constructor(
     @InjectRepository(UploadedFileEntity)
     private uploadedFilesRepository: Repository<UploadedFileEntity>,
+    private readonly azureBlobService: AzureBlobService,
   ) {}
 
-  async create(uploadedFile: Express.Multer.File): Promise<UploadedFileEntity> {
-    this.logger.log('create test');
+  async createImage(uploadedFile: Express.Multer.File): Promise<UploadedFileEntity> {
     try {
+      const [storedFileName, storedUrl] =
+      await this.azureBlobService.uploadFile(
+        uploadedFile,
+        this.containerName,
+        );
+        
       const file = new UploadedFileEntity();
-      file.id = uuid.v4();
-      const dimension = sizeOf(uploadedFile.buffer);
-      file.filename = uploadedFile.originalname || 'default';
-      file.path = uploadedFile.path || 'default';
+      file.id = ulid();
+      file.filename = uploadedFile.originalname;
       file.mime = uploadedFile.mimetype;
       file.size = uploadedFile.size;
-      file.width = dimension.width;
-      file.height = dimension.height;
-      file.url = `test/${file.path}`;
+      file.path = storedFileName;
+      file.url = storedUrl;
+      file.width = this.getImageWidthHeight(uploadedFile)[0];
+      file.height = this.getImageWidthHeight(uploadedFile)[1];
 
       await this.uploadedFilesRepository.save(file);
       return file;
@@ -39,7 +44,6 @@ export class UploadedFilesService {
   }
 
   async findAll(): Promise<UploadedFileEntity[]> {
-    this.logger.log('findAll test');
     try {
       return await this.uploadedFilesRepository.find();
     } catch (error) {
@@ -49,44 +53,41 @@ export class UploadedFilesService {
   }
 
   async findOne(id: string): Promise<UploadedFileEntity> {
-    this.logger.log('findOne test');
     try {
-      return await this.uploadedFilesRepository.findOne({
+      const result = await this.uploadedFilesRepository.findOne({
         where: { id },
       });
+      if (!result) {
+        throw new NotFoundException(Strings.UPLOADED_FILE_NOT_FOUND);
+      }
+      return result;
     } catch (error) {
       this.logger.error(error);
       throw error;
     }
   }
 
-  async update(
-    id: string,
-    updateUploadedFileDto: UpdateUploadedFileDto,
-  ): Promise<UploadedFileEntity> {
-    this.logger.log('update test');
+  async remove(id: string): Promise<string> {
     try {
-      const { name } = updateUploadedFileDto;
-      const aFile = await this.uploadedFilesRepository.findOne({
+      const file = await this.uploadedFilesRepository.findOne({
         where: { id },
       });
-      if (!aFile) throw new NotFoundException(Strings.UPLOADED_FILE_NOT_FOUND);
-      aFile.filename = name;
-      return this.uploadedFilesRepository.save(aFile);
-    } catch (error) {
-      this.logger.error(error);
-      throw error;
-    }
-  }
 
-  remove(id: string): string {
-    this.logger.log('remove test');
-    try {
-      this.uploadedFilesRepository.delete(id);
+      if (!file) {
+        throw new NotFoundException(Strings.UPLOADED_FILE_NOT_FOUND);
+      }
+
+      await this.azureBlobService.deleteFile(file.path, 'chuncheon');
+      await this.uploadedFilesRepository.softDelete(id);
       return `File with id ${id} has been deleted`;
     } catch (error) {
       this.logger.error(error);
       throw error;
     }
+  }
+
+  private getImageWidthHeight(image: Express.Multer.File) {
+    const dimensions = sizeOf(image.buffer);
+    return [dimensions.width, dimensions.height];
   }
 }

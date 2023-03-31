@@ -4,8 +4,11 @@ import {
   AfterInsert,
   AfterLoad,
   Column,
+  CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity({ name: 'uploaded_files' })
@@ -14,10 +17,6 @@ export class UploadedFileEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Allow()
-  @Column()
-  path: string;
-
   @ApiProperty()
   @Column()
   width: number;
@@ -25,13 +24,19 @@ export class UploadedFileEntity {
   @ApiProperty()
   @Column()
   height: number;
+
   @ApiProperty()
   @Column()
   mime: string;
 
+  @Allow()
+  @Column()
+  path: string;
+
   @ApiProperty()
   @Column()
   filename: string;
+
   @ApiProperty()
   @Column()
   size: number;
@@ -40,11 +45,15 @@ export class UploadedFileEntity {
   @Column()
   url: string;
 
-  @AfterLoad()
-  @AfterInsert()
-  updatePath() {
-    if (this.path.indexOf('/') === 0) {
-      this.path = process.env.AZURE_CDN_URL + this.path;
-    }
-  }
+  @ApiProperty()
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
+  createdAt: Date;
+
+  @ApiProperty()
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
+  updatedAt: Date;
+
+  @ApiProperty()
+  @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp' })
+  deleted_at: Date;
 }

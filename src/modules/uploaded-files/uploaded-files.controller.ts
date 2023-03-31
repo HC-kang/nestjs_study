@@ -23,8 +23,8 @@ export class UploadedFilesController {
   @ApiConsumes('multipart/form-data')
   @Post()
   @UseInterceptors(FileInterceptor('file'))
-  async create(@UploadedFile() uploadedFile: Express.Multer.File) {
-    return await this.uploadedFilesService.create(uploadedFile);
+  async createImage(@UploadedFile() uploadedFile: Express.Multer.File) {
+    return await this.uploadedFilesService.createImage(uploadedFile);
   }
 
   @Get()
@@ -35,14 +35,6 @@ export class UploadedFilesController {
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<UploadedFileEntity> {
     return await this.uploadedFilesService.findOne(id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateUploadedFileDto: UpdateUploadedFileDto,
-  ) {
-    return this.uploadedFilesService.update(id, updateUploadedFileDto);
   }
 
   @Delete(':id')
