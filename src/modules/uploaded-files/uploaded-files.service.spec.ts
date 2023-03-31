@@ -9,14 +9,20 @@ class MockUploadedFileEntityRepository extends Repository<UploadedFileEntity> {}
 describe('UploadedFilesService', () => {
   let service: UploadedFilesService;
   let fakeUploadedFilesRepository: Repository<UploadedFileEntity>;
+  let fakeUploadedFileService: Partial<UploadedFilesService>;
 
   beforeEach(async () => {
+    fakeUploadedFileService = {};
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UploadedFilesService,
         {
           provide: getRepositoryToken(UploadedFileEntity),
           useClass: MockUploadedFileEntityRepository,
+        },
+        {
+          provide: UploadedFilesService,
+          useValue: fakeUploadedFileService,
         },
       ],
     }).compile();
