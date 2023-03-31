@@ -1,8 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Allow } from 'class-validator';
 import {
-  AfterInsert,
-  AfterLoad,
   Column,
   CreateDateColumn,
   DeleteDateColumn,

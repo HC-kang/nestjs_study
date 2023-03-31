@@ -2,16 +2,12 @@ import {
   Controller,
   Get,
   Post,
-  Body,
-  Patch,
   Param,
   Delete,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { UploadedFilesService } from './uploaded-files.service';
-import { CreateUploadedFileDto } from './dto/create-uploaded-file.dto';
-import { UpdateUploadedFileDto } from './dto/update-uploaded-file.dto';
 import { UploadedFileEntity } from './entities/uploaded-file.entity';
 import { ApiConsumes } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';

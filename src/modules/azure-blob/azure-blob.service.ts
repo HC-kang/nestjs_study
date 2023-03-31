@@ -1,4 +1,4 @@
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import * as uuid from 'uuid';
 import { BlockBlobClient, BlobServiceClient } from '@azure/storage-blob';
 
