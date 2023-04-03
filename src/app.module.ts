@@ -13,7 +13,6 @@ import { CommandModule } from './console/command/command.module';
 import { HealthCheckModule } from './health-check/health-check.module';
 import { AzureBlobModule } from './modules/azure-blob/azure-blob.module';
 import { UploadedFilesModule } from './modules/uploaded-files/uploaded-files.module';
-import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -48,6 +47,6 @@ import { AppController } from './app.controller';
     AzureBlobModule,
     UploadedFilesModule,
   ],
-  controllers: [AppController],
+  controllers: [],
 })
 export class AppModule {}

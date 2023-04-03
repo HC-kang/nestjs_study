@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthGuard } from '../../common/guards/auth.guard';
+import { JobQueueProducerService } from 'src/job-queue/job-queue.producer.service';
 import { AuthService } from '../auth/auth.service';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
@@ -7,13 +7,13 @@ import { UsersService } from './users.service';
 describe('UsersController', () => {
   let controller: UsersController;
   let fakeUsersService: Partial<UsersService>;
-  let fakeAuthGuard: Partial<AuthGuard>;
   let fakeAuthService: Partial<AuthService>;
+  let fakeJobQueueProducerService: Partial<JobQueueProducerService>;
 
   beforeEach(async () => {
     fakeUsersService = {};
-    fakeAuthGuard = { canActivate: jest.fn().mockResolvedValue(true) } as any;
     fakeAuthService = {};
+    fakeJobQueueProducerService = {};
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UsersController],
       providers: [
@@ -22,12 +22,12 @@ describe('UsersController', () => {
           useValue: fakeUsersService,
         },
         {
-          provide: AuthGuard,
-          useValue: fakeAuthGuard,
-        },
-        {
           provide: AuthService,
           useValue: fakeAuthService,
+        },
+        {
+          provide: JobQueueProducerService,
+          useValue: fakeJobQueueProducerService,
         },
       ],
     }).compile();

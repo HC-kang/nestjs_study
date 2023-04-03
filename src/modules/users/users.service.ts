@@ -14,7 +14,6 @@ import * as uuid from 'uuid';
 import { ulid } from 'ulid';
 import { AuthService } from '../../modules/auth/auth.service';
 import { TokenPayloadDto } from '../../modules/auth/dto/token-payload.dto';
-import { EmailService } from '../../email/email.service';
 import { UserNotFoundException } from '../../common/exceptions/user-not-found.exception';
 import { JobQueueProducerService } from '../../job-queue/job-queue.producer.service';
 
@@ -25,7 +24,6 @@ export class UsersService {
     @InjectRepository(UserEntity)
     private usersRepository: Repository<UserEntity>,
     private readonly authService: AuthService,
-    private readonly emailService: EmailService,
     private readonly jobQueueProducerService: JobQueueProducerService,
   ) {}
 

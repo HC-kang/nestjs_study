@@ -1,6 +1,6 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { EmailService } from '../../email/email.service';
+import { JobQueueProducerService } from 'src/job-queue/job-queue.producer.service';
 import { Repository } from 'typeorm';
 import { AuthService } from '../auth/auth.service';
 import { UserEntity } from './entities/user.entity';
@@ -12,11 +12,11 @@ describe('UsersService', () => {
   let service: UsersService;
   let fakeUsersRepository: Repository<UserEntity>;
   let fakeAuthService: Partial<AuthService>;
-  let fakeEmailService: Partial<EmailService>;
+  let fakeJobQueueProducerService: Partial<JobQueueProducerService>;
 
   beforeEach(async () => {
     fakeAuthService = {};
-    fakeEmailService = {};
+    fakeJobQueueProducerService = {};
     const module = await Test.createTestingModule({
       providers: [
         UsersService,
@@ -29,8 +29,8 @@ describe('UsersService', () => {
           useValue: fakeAuthService,
         },
         {
-          provide: EmailService,
-          useValue: fakeEmailService,
+          provide: JobQueueProducerService,
+          useValue: fakeJobQueueProducerService,
         },
       ],
     }).compile();

@@ -34,7 +34,7 @@ export class UsersController {
   private readonly logger = new Logger(UsersController.name);
   constructor(
     private readonly usersService: UsersService,
-    private messageProducerService: JobQueueProducerService,
+    private jobQueueProducerService: JobQueueProducerService,
   ) {}
 
   @Post()
@@ -123,7 +123,7 @@ export class UsersController {
 
   @Get('test/send-message')
   sendMessage(@Query('msg') msg: string, @Query('job') job: string) {
-    this.messageProducerService.sendMessage(msg, job);
+    this.jobQueueProducerService.sendMessage(msg, job);
     return msg;
   }
 }
