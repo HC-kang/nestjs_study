@@ -2,7 +2,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UploadedFileEntity } from './entities/uploaded-file.entity';
-import { Strings } from 'src/common/constants';
+import { Strings } from '../../common/constants';
 import sizeOf from 'image-size';
 import { AzureBlobService } from '../azure-blob/azure-blob.service';
 import { ulid } from 'ulid';

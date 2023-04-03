@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bull';
-import { JobQueueConsumer } from 'src/job-queue/job-queue.consumer';
-import { JobQueueProducerService } from 'src/job-queue/job-queue.producer.service';
-import { EmailModule } from 'src/email/email.module';
+import { JobQueueConsumer } from '../job-queue/job-queue.consumer';
+import { JobQueueProducerService } from '../job-queue/job-queue.producer.service';
+import { EmailModule } from '../email/email.module';
 
 @Module({
   imports: [

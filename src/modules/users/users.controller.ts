@@ -26,7 +26,7 @@ import { Auth, AuthUser } from '../../common/decorators';
 import { RoleType } from '../../common/constants';
 import { VerifyEmailDto } from './dto/verify-email.dto';
 import { Response } from 'express';
-import { JobQueueProducerService } from 'src/job-queue/job-queue.producer.service';
+import { JobQueueProducerService } from '../../job-queue/job-queue.producer.service';
 
 @ApiTags('users')
 @Controller('users')

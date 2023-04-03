@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { EmailService } from 'src/email/email.service';
+import { EmailService } from '../../email/email.service';
 import { Repository } from 'typeorm';
 import { AuthService } from '../auth/auth.service';
 import { UserEntity } from './entities/user.entity';
