@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bull';
 import { JobQueueConsumer } from 'src/job-queue/job-queue.consumer';
 import { JobQueueProducerService } from 'src/job-queue/job-queue.producer.service';
+import { EmailModule } from 'src/email/email.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { JobQueueProducerService } from 'src/job-queue/job-queue.producer.servic
     BullModule.registerQueue({
       name: 'message-queue',
     }),
+    EmailModule,
   ],
   providers: [JobQueueProducerService, JobQueueConsumer],
   exports: [JobQueueProducerService],

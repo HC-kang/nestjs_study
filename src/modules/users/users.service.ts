@@ -16,6 +16,7 @@ import { AuthService } from '../../modules/auth/auth.service';
 import { TokenPayloadDto } from '../../modules/auth/dto/token-payload.dto';
 import { EmailService } from '../../email/email.service';
 import { UserNotFoundException } from '../../common/exceptions/user-not-found.exception';
+import { JobQueueProducerService } from '../../job-queue/job-queue.producer.service';
 
 @Injectable()
 export class UsersService {
@@ -25,6 +26,7 @@ export class UsersService {
     private usersRepository: Repository<UserEntity>,
     private readonly authService: AuthService,
     private readonly emailService: EmailService,
+    private readonly jobQueueProducerService: JobQueueProducerService,
   ) {}
 
   async createUser(
@@ -45,7 +47,7 @@ export class UsersService {
         password,
         signupVerifyToken,
       );
-      await this.sendMemberJoinEmail(email, signupVerifyToken);
+      await this.jobQueueProducerService.scheduleJoinEmailJob(email, signupVerifyToken);
       return user;
     } catch (error) {
       this.logger.error(error);
@@ -158,21 +160,6 @@ export class UsersService {
     } catch (error) {
       this.logger.error(error);
       throw new UnprocessableEntityException(Strings.USER_SAVE_FAILED);
-    }
-  }
-
-  private async sendMemberJoinEmail(
-    emailAddress: string,
-    signupVerifyToken: string,
-  ) {
-    try {
-      await this.emailService.sendMemberJoinVerification(
-        emailAddress,
-        signupVerifyToken,
-      );
-    } catch (error) {
-      this.logger.error(error);
-      throw new UnprocessableEntityException(Strings.EMAIL_SEND_FAILED);
     }
   }
 }

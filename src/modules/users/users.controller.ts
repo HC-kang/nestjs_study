@@ -37,12 +37,6 @@ export class UsersController {
     private messageProducerService: JobQueueProducerService,
   ) {}
 
-  @Get('test-send-message')
-  sendMessage(@Query('msg') msg: string, @Query('job') job: string) {
-    this.messageProducerService.sendMessage(msg, job);
-    return msg;
-  }
-
   @Post()
   @ApiOperation({
     summary: 'Create a new user',
@@ -125,5 +119,11 @@ export class UsersController {
   })
   removeUser(@Param('userId') userId: string) {
     return this.usersService.removeUser(userId);
+  }
+
+  @Get('test/send-message')
+  sendMessage(@Query('msg') msg: string, @Query('job') job: string) {
+    this.messageProducerService.sendMessage(msg, job);
+    return msg;
   }
 }
