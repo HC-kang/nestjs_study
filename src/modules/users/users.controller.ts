@@ -14,12 +14,19 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEntity, UserWithoutPassword } from './entities/user.entity';
-import { ApiCreatedResponse, ApiOperation, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiOperation,
+  ApiProperty,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { LoginUserDto } from './dto/login-user.dto';
 import { Auth, AuthUser } from '../../common/decorators';
 import { RoleType } from '../../common/constants';
 import { VerifyEmailDto } from './dto/verify-email.dto';
 import { Response } from 'express';
+import { JobQueueProducerService } from 'src/job-queue/job-queue.producer.service';
 
 @ApiTags('users')
 @Controller('users')
@@ -27,7 +34,14 @@ export class UsersController {
   private readonly logger = new Logger(UsersController.name);
   constructor(
     private readonly usersService: UsersService,
-    ) {}
+    private messageProducerService: JobQueueProducerService,
+  ) {}
+
+  @Get('test-send-message')
+  sendMessage(@Query('msg') msg: string, @Query('job') job: string) {
+    this.messageProducerService.sendMessage(msg, job);
+    return msg;
+  }
 
   @Post()
   @ApiOperation({
@@ -49,9 +63,12 @@ export class UsersController {
   }
 
   @Post('/email-verify')
-  async verifyEmail(@Query() dto: VerifyEmailDto, @Res() res: Response): Promise<void> {
+  async verifyEmail(
+    @Query() dto: VerifyEmailDto,
+    @Res() res: Response,
+  ): Promise<void> {
     const { signupVerifyToken } = dto;
-    await this.usersService.verifyEmail(signupVerifyToken)
+    await this.usersService.verifyEmail(signupVerifyToken);
     return res.redirect(process.env.FRONT_LOGIN_URL);
   }
 

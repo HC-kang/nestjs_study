@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { BatchController } from './batch.controller';
 import { ScheduleModule } from '@nestjs/schedule';
-import { TaskService } from './task.service';
+import { TaskService } from './tasks/task.service';
 
 @Module({
   imports: [ScheduleModule.forRoot()],

@@ -13,10 +13,7 @@ import { CommandModule } from './console/command/command.module';
 import { HealthCheckModule } from './health-check/health-check.module';
 import { AzureBlobModule } from './modules/azure-blob/azure-blob.module';
 import { UploadedFilesModule } from './modules/uploaded-files/uploaded-files.module';
-import { BullModule } from '@nestjs/bull';
 import { AppController } from './app.controller';
-import { MessageProducerService } from './message.producer.service';
-import { MessageConsumer } from './message.consumer';
 
 @Module({
   imports: [
@@ -50,17 +47,7 @@ import { MessageConsumer } from './message.consumer';
     HealthCheckModule,
     AzureBlobModule,
     UploadedFilesModule,
-    BullModule.forRoot({
-      redis: {
-        host: process.env.REDIS_HOST,
-        port: Number(process.env.REDIS_PORT),
-      },
-    }),
-    BullModule.registerQueue({
-      name: 'message-queue',
-    }),
   ],
   controllers: [AppController],
-  providers: [MessageProducerService, MessageConsumer],
 })
 export class AppModule {}

@@ -14,8 +14,8 @@ export class EmailService {
     this.transporter = nodemailer.createTransport({
       service: config.service,
       auth: {
-        user: config.auth?.user || 'user', // TODO: remove default value
-        pass: config.auth?.pass || 'pass', // TODO: remove default value
+        user: config.auth?.user,
+        pass: config.auth?.pass,
       },
     });
   }
