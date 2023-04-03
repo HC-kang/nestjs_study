@@ -25,7 +25,9 @@ import { Response } from 'express';
 @Controller('users')
 export class UsersController {
   private readonly logger = new Logger(UsersController.name);
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    ) {}
 
   @Post()
   @ApiOperation({
