@@ -1,6 +1,8 @@
 import { Controller, Post } from '@nestjs/common';
 import { SchedulerRegistry } from '@nestjs/schedule';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('batches')
 @Controller('batches')
 export class BatchController {
   constructor(private scheduler: SchedulerRegistry) {}

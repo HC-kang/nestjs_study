@@ -56,6 +56,9 @@ export class UsersController {
     return await this.usersService.createUser(name, email, password);
   }
 
+  @ApiOperation({
+    summary: 'Verify email',
+  })
   @Post('/email-verify')
   async verifyEmail(
     @Query() dto: VerifyEmailDto,
@@ -121,6 +124,9 @@ export class UsersController {
     return this.usersService.removeUser(userId);
   }
 
+  @ApiOperation({
+    summary: 'Test sending message to job queue',
+  })
   @Get('test/send-message')
   sendMessage(@Query('msg') msg: string, @Query('job') job: string) {
     this.jobQueueProducerService.sendMessage(msg, job);
