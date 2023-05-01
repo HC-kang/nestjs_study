@@ -3,16 +3,12 @@ import { BullModule } from '@nestjs/bull';
 import { JobQueueConsumer } from '../job-queue/job-queue.consumer';
 import { JobQueueProducerService } from '../job-queue/job-queue.producer.service';
 import { EmailModule } from '../email/email.module';
+import redisConfig from 'src/config/redis.config';
 
 @Module({
   imports: [
     BullModule.forRootAsync({
-      useFactory: () => ({
-        redis: {
-          host: process.env.REDIS_HOST,
-          port: Number(process.env.REDIS_PORT),
-        },
-      }),
+      useFactory: redisConfig,
     }),
     BullModule.registerQueue({
       name: 'message-queue',

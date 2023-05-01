@@ -1,23 +1,12 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { ConfigType } from '@nestjs/config';
-import authConfig from '../../config/auth.config';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { TokenPayloadDto } from './dto/token-payload.dto';
 import { TokenType, RoleType, Strings } from '../../common/constants';
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
-}
-
 @Injectable()
 export class AuthService {
-  constructor(
-    @Inject(authConfig.KEY) private config: ConfigType<typeof authConfig>,
-    private jwtService: JwtService,
-  ) {}
+  constructor(private jwtService: JwtService) {}
 
   async hashPassword(password: string): Promise<string> {
     return await bcrypt.hash(password, 12);
@@ -44,7 +33,7 @@ export class AuthService {
     });
   }
 
-  verifyAccessToken(token: string): Promise<Boolean> {
+  verifyAccessToken(token: string): Promise<boolean> {
     try {
       const result = this.jwtService.verify(token);
       return result;
