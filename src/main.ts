@@ -12,6 +12,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalInterceptors(new TransformInterceptor());
+  app.enableVersioning();
 
   setupApiAuth(app);
   setupSwagger(app);

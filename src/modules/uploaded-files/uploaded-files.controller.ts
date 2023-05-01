@@ -12,8 +12,8 @@ import { UploadedFileEntity } from './entities/uploaded-file.entity';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 
-@ApiTags('uploaed-files')
-@Controller('uploaded-files')
+@ApiTags('uploaded-files')
+@Controller({ version: '1', path: 'uploaded-files' })
 export class UploadedFilesController {
   constructor(private readonly uploadedFilesService: UploadedFilesService) {}
 

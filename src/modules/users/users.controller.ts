@@ -29,7 +29,7 @@ import { Response } from 'express';
 import { JobQueueProducerService } from '../../job-queue/job-queue.producer.service';
 
 @ApiTags('users')
-@Controller('users')
+@Controller({ version: '1', path: 'users' })
 export class UsersController {
   private readonly logger = new Logger(UsersController.name);
   constructor(

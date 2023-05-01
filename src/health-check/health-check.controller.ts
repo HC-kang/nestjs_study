@@ -9,7 +9,7 @@ import {
 import { SampleHealthIndicator } from './indicators/sample.indicator';
 
 @ApiTags('health-check')
-@Controller('health-check')
+@Controller({ version: '1', path: 'health-check' })
 export class HealthCheckController {
   constructor(
     private health: HealthCheckService,

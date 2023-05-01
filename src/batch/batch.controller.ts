@@ -3,10 +3,10 @@ import { SchedulerRegistry } from '@nestjs/schedule';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('batches')
-@Controller('batches')
+@Controller({ version: '1', path: 'batches' })
 export class BatchController {
   constructor(private scheduler: SchedulerRegistry) {}
-  
+
   @Post('/start-sample')
   start() {
     const job = this.scheduler.getCronJob('cronSample');
