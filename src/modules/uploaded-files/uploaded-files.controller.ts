@@ -11,6 +11,7 @@ import { UploadedFilesService } from './uploaded-files.service';
 import { UploadedFileEntity } from './entities/uploaded-file.entity';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ImageValidationPipe } from 'src/common/pipes/image-validation.pipe';
 
 @ApiTags('uploaded-files')
 @Controller({ version: '1', path: 'uploaded-files' })
@@ -20,7 +21,9 @@ export class UploadedFilesController {
   @ApiConsumes('multipart/form-data')
   @Post()
   @UseInterceptors(FileInterceptor('file'))
-  async createImage(@UploadedFile() uploadedFile: Express.Multer.File) {
+  async createImage(
+    @UploadedFile(new ImageValidationPipe()) uploadedFile: Express.Multer.File,
+  ) {
     return await this.uploadedFilesService.createImage(uploadedFile);
   }
 

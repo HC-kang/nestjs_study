@@ -58,7 +58,7 @@ export class UploadedFilesService {
         where: { id },
       });
       if (!result) {
-        throw new NotFoundException(Strings.UPLOADED_FILE_NOT_FOUND);
+        throw new NotFoundException(Strings.UPLOADED_FILE_NOT_FOUND_EXCEPTION);
       }
       return result;
     } catch (error) {
@@ -74,7 +74,7 @@ export class UploadedFilesService {
       });
 
       if (!file) {
-        throw new NotFoundException(Strings.UPLOADED_FILE_NOT_FOUND);
+        throw new NotFoundException(Strings.UPLOADED_FILE_NOT_FOUND_EXCEPTION);
       }
 
       await this.azureBlobService.deleteFile(file.path, 'chuncheon');
