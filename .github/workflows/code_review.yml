@@ -5,9 +5,8 @@ permissions:
   pull-requests: write
 
 on:
-  push
-#   pull_request:
-#     types: [opened, synchronize]
+  pull_request:
+    types: [opened, synchronize]
 
 jobs:
   test:
