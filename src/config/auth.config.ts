@@ -1,14 +1,17 @@
-import { JwtModuleOptions } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { required } from './helpers';
+import { JwtModuleAsyncOptions } from '@nestjs/jwt';
 
-export default (): JwtModuleOptions => ({
-  secret: process.env.JWT_SECRET,
-  // privateKey: 'key',
-  // publicKey: 'key',
-  signOptions: {
-    // algorithm: 'RS256',
-    expiresIn: '1d',
-  },
-  verifyOptions: {
-    // algorithms: ['RS256'],
-  },
-});
+export const authConfig = (config: ConfigService): JwtModuleAsyncOptions =>
+  ({
+    secret: required('JWT_SECRET', config),
+    signOptions: {
+      // algorithm: 'RS256',
+      expiresIn: required('JWT_EXPIRES_IN', config),
+    },
+    // privateKey: 'key',
+    // publicKey: 'key',
+    verifyOptions: {
+      // algorithms: ['RS256'],
+    },
+  } as JwtModuleAsyncOptions);

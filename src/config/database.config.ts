@@ -1,14 +1,25 @@
+import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { required } from '.';
 
-export default (): TypeOrmModuleOptions => ({
-  type: process.env.DATABASE_CONNECTION as any,
-  host: process.env.DATABASE_HOST,
-  port: parseInt(process.env.DATABASE_PORT),
-  username: process.env.DATABASE_USERNAME,
-  password: process.env.DATABASE_PASSWORD,
-  database: process.env.DATABASE_NAME,
-  synchronize: process.env.DATABASE_SYNCHRONIZE === 'true',
+const isProduction = process.env.NODE_ENV === 'production';
+
+export const databaseConfig = (
+  config?: ConfigService,
+): TypeOrmModuleOptions => ({
+  type: required('DATABASE_CONNECTION', config, 'postgres') as any,
+  host: required('DATABASE_HOST', config, 'postgres') as string,
+  port: parseInt(required('DATABASE_PORT', config, '5432') as string),
+  username: required('DATABASE_USERNAME', config, 'postgres') as string,
+  password: required('DATABASE_PASSWORD', config, 'postgres') as string,
+  database: required('DATABASE_NAME', config, 'postgres') as string,
+  synchronize: required('DATABASE_SYNCHRONIZE', config, false) as boolean,
   entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-  migrations: [__dirname + '/../**migrations/*.js'],
+  migrations: [__dirname + '/../database/**migrations/*{.ts,.js}'],
   migrationsTableName: 'migrations',
+  extra: isProduction
+    ? {
+        ssl: { rejectUnauthorized: false },
+      }
+    : undefined,
 });

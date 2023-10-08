@@ -1,18 +1,19 @@
 import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { required } from '.';
 
-export function setupSwagger(app: INestApplication): void {
+export const setupSwagger = (app: INestApplication): void => {
   const options = new DocumentBuilder()
-    .setTitle('NestJS Boilerplate')
-    .setDescription(`The NestJS Boilerplate API description.`)
+    .setTitle('News4U Api Documentation')
+    .setDescription('The News4U API description')
     .setVersion('1.0.0')
-    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup(process.env.SWAGGER_URL, app, document, {
+  const swaggerUrl = required('SWAGGER_URL') as string;
+  SwaggerModule.setup(swaggerUrl, app, document, {
     swaggerOptions: {
       persistAuthorization: true,
     },
   });
-}
+};

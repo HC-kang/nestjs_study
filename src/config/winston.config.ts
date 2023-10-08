@@ -1,5 +1,6 @@
 import * as winston from 'winston';
 import { WinstonModule } from 'nest-winston';
+import { isDevelopment } from '.';
 
 const { combine, timestamp, printf, colorize } = winston.format;
 
@@ -13,12 +14,6 @@ const levels = {
   silly: 6,
 };
 
-const logLevel = () => {
-  const isDevelopment =
-    !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
-  return isDevelopment ? 'debug' : 'http';
-};
-
 const color = {
   error: 'red',
   warn: 'yellow',
@@ -27,6 +22,10 @@ const color = {
   verbose: 'cyan',
   debug: 'white',
   silly: 'gray',
+};
+
+const logLevel = () => {
+  return isDevelopment() ? 'debug' : 'http';
 };
 
 // Add colors to the logger
@@ -52,19 +51,20 @@ const transports = [
   new winston.transports.Console(consoleOnlyOptions),
   new winston.transports.File({
     level: 'error',
-    filename: 'storage/log/nest-error.log',
+    filename: 'storage/logs/nest-error.log',
     maxsize: 5 * 1024 * 1024,
     tailable: true,
   }),
   new winston.transports.File({
-    level: 'info',
-    filename: 'storage/log/nest-all.log',
+    // level: 'info',
+    level: 'silly',
+    filename: 'storage/logs/nest-all.log',
     maxsize: 5 * 1024 * 1024,
     tailable: true,
   }),
 ];
 
-export const CustomLogger = WinstonModule.createLogger({
+export const WinstonLogger = WinstonModule.createLogger({
   level: logLevel(),
   levels,
   format: customLogFormat,

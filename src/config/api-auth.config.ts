@@ -1,16 +1,30 @@
 import { INestApplication } from '@nestjs/common';
 import * as expressBasicAuth from 'express-basic-auth';
+import { isDevelopment, required } from '.';
+import { BasicAuthMiddlewareOptions } from 'express-basic-auth';
+
+const swaggerUrl = () => required('SWAGGER_URL') as string;
+const apiAuthUser = () => required('API_AUTH_USER') as string;
+const apiAuthPassword = () => required('API_AUTH_PASSWORD') as string;
 
 export function setupApiAuth(app: INestApplication): void {
-  const options = {
-    challenge: true,
-    users: {
-      [process.env.ADMIN_USERNAME]: process.env.ADMIN_PASSWORD,
-    },
-  };
-  app.use(createUrlArray(process.env.SWAGGER_URL), expressBasicAuth(options));
+  if (isDevelopment()) return; // Don't use api auth in development
+
+  app.use(
+    defineAuthUrl(swaggerUrl()), //
+    expressBasicAuth(defineOptions()),
+  );
 }
 
-function createUrlArray(url: string): string[] {
+const defineOptions = (): BasicAuthMiddlewareOptions => {
+  return {
+    challenge: true,
+    users: {
+      [apiAuthUser()]: apiAuthPassword(),
+    },
+  };
+};
+
+function defineAuthUrl(url: string): string[] {
   return [url, url + '-json'];
 }
