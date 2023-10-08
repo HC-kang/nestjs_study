@@ -11,7 +11,6 @@ import { Request, Response } from 'express';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
-  constructor() {}
   private readonly logger = new Logger(HttpExceptionFilter.name);
   catch(exception: Error, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
