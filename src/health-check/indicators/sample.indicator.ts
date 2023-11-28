@@ -21,7 +21,9 @@ export class SampleHealthIndicator extends HealthIndicator {
   async isHealthy(key: string): Promise<HealthIndicatorResult> {
     const badSamples = this.nodes.filter((sample) => sample.type === 'bad');
     const isHealthy = badSamples.length === 0;
-    const result = this.getStatus(key, isHealthy, { badSamples: badSamples.length });
+    const result = this.getStatus(key, isHealthy, {
+      badSamples: badSamples.length,
+    });
 
     if (isHealthy) {
       return result;
