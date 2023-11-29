@@ -1,0 +1,90 @@
+name: test_on_push
+
+on:
+  push:
+    branches:
+      - develop
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  SHA: ${{ github.sha }}
+
+jobs:
+  test:
+    name: test nestjs
+    runs-on: ubuntu-22.04
+
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.0.0
+
+      - name: Setup node
+        uses: actions/setup-node@v3.8.1
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Cache node modules
+        uses: actions/cache@v3.3.2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Check database state
+        run: |
+          sudo apt-get install -y postgresql-client
+          PGPASSWORD=postgres psql -h localhost -U postgres -d postgres -c "\dt"
+
+      - name: Run tests
+        run: npm run test
+
+      - name: Run e2e tests
+        run: npm run test:e2e
+
+    #   - name: Notify Slack on Failure
+    #     if: failure()
+    #     uses: 8398a7/action-slack@v3.15.1
+    #     with:
+    #       status: ${{ job.status }}
+    #       fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+    #       author_name: ${{ github.actor }}
+    #       channel: ${{ secrets.SLACK_CHANNEL }}
+    #       username: ${{ secrets.SLACK_USERNAME }}
+    #       text: 'Tests failed! :x:'
+    #     env: 
+    #       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    #   - name: Notify Slack on Success
+    #     if: success()
+    #     uses: 8398a7/action-slack@v3.15.1
+    #     with:
+    #       status: ${{ job.status }}
+    #       fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+    #       author_name: ${{ github.actor }}
+    #       channel: ${{ secrets.SLACK_CHANNEL }}
+    #       username: ${{ secrets.SLACK_USERNAME }}
+    #       text: 'Tests passed! :white_check_mark:'
+    #     env: 
+    #       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
