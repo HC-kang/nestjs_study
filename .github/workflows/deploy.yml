@@ -1,0 +1,174 @@
+name: Test and Deploy
+
+on:
+  pull_request:
+    branches:
+      - stage
+      - main
+    types:
+      - closed
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+env:
+  ECR_REPOSITORY_NESTJS: 'nestjs-study'
+  ECS_SERVICE_NAME: 'nestjs'
+  ECS_CLUSTER_NAME: 'nestjs-study'
+
+jobs:
+  test:
+    name: test nestjs
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.0.0
+
+      - name: Setup node
+        uses: actions/setup-node@v3.8.1
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Cache node modules
+        uses: actions/cache@v3.3.2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Run tests
+        run: npm run test
+
+      - name: Comment with Test Coverage
+        uses: dkershner6/jest-coverage-commenter-action@v1
+        with:
+          github_token: "${{ secrets.GITHUB_TOKEN }}"
+          test_command: "npm run test:cov"
+
+      - name: Run e2e tests
+        env:
+          DATABASE_CONNECTION: 'postgres'
+          DATABASE_HOST: 'localhost'
+          DATABASE_PORT: '5432'
+          DATABASE_USERNAME: ${{ env.DATABASE_USERNAME }}
+          DATABASE_PASSWORD: ${{ env.DATABASE_PASSWORD }}
+          DATABASE_NAME: 'postgres'
+        run: npm run test:e2e
+
+      - name: Notify Slack on Failure
+        if: failure()
+        uses: 8398a7/action-slack@v3.15.1
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+          author_name: ${{ github.actor }}
+          channel: ${{ vars.SLACK_CHANNEL }}
+          username: ${{ vars.SLACK_USERNAME }}
+          text: 'Tests failed! :x:'
+        env: 
+          SLACK_WEBHOOK_URL: ${{ vars.SLACK_WEBHOOK_URL }}
+      
+      - name: Notify Slack on Success
+        if: success()
+        uses: 8398a7/action-slack@v3.15.1
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+          author_name: ${{ github.actor }}
+          channel: ${{ vars.SLACK_CHANNEL }}
+          username: ${{ vars.SLACK_USERNAME }}
+          text: 'Tests passed! :white_check_mark:'
+        env: 
+          SLACK_WEBHOOK_URL: ${{ vars.SLACK_WEBHOOK_URL }}
+
+
+  build_and_deploy:
+    if: github.event.pull_request.merged == true
+    name: build docker image and ecs deploy
+    runs-on: ubuntu-22.04
+    needs: test
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4.0.0
+
+      - name: configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-region: ap-northeast-2
+          role-to-assume: arn:aws:iam::332034673285:role/HHP-Org
+          role-session-name: HHP-Org
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build and push NestJS
+        uses: docker/build-push-action@v5.0.0
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_NESTJS }}:${{ github.sha }}
+          build-args: |
+            NODE_ENV=production
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.ECR_REPOSITORY_NESTJS }}
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_NESTJS }}:${{ github.sha }}
+
+      - name: configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-region: ap-northeast-2
+          role-to-assume: arn:aws:iam::332034673285:role/HHP-Org
+          role-session-name: HHP-Org
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE_NAME }}
+          cluster: ${{ env.ECS_CLUSTER_NAME }}
+          wait-for-service-stability: false
+
+      - name: Notify Slack on Failure
+        if: failure()
+        uses: 8398a7/action-slack@v3.15.1
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+          author_name: ${{ github.actor }}
+          channel: ${{ vars.SLACK_CHANNEL }}
+          username: ${{ vars.SLACK_USERNAME }}
+          text: 'Deploy failed! :x:'
+        env: 
+          SLACK_WEBHOOK_URL: ${{ vars.SLACK_WEBHOOK_URL }}
+
+      - name: Notify Slack on Success
+        if: success()
+        uses: 8398a7/action-slack@v3.15.1
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+          author_name: ${{ github.actor }}
+          channel: ${{ vars.SLACK_CHANNEL }}
+          username: ${{ vars.SLACK_USERNAME }}
+          text: 'Deploy success! :white_check_mark:'
+        env: 
+          SLACK_WEBHOOK_URL: ${{ vars.SLACK_WEBHOOK_URL }}
