@@ -2,8 +2,8 @@
   "taskDefinitionArn": "arn:aws:ecs:ap-northeast-2:332034673285:task-definition/ford-study-nestjs:1",
   "containerDefinitions": [
     {
-      "name": "nestjs",
-      "image": "weston0713/nestjs",
+      "name": "ford-study",
+      "image": "332034673285.dkr.ecr.ap-northeast-2.amazonaws.com/ford-study",
       "cpu": 0,
       "portMappings": [
         {
