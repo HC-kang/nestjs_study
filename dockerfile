@@ -27,7 +27,6 @@ FROM development as production
 
 COPY --chown=node:node --from=build /dist /dist
 COPY --chown=node:node --from=build /node_modules /node_modules
-COPY --chown=node:node --from=build /storage /storage
 # COPY --chown=node:node --from=build /.env.production /.env.production
 
 ENV NODE_ENV=production
