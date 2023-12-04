@@ -14,7 +14,8 @@ permissions:
   pull-requests: write
 
 env:
-  ECR_REPOSITORY_NESTJS: 'ford-study'
+  ECR_REPOSITORY: 'ford-study'
+  ECS_CONTAINER_NAME: 'nestjs'
   ECS_SERVICE_NAME: 'ford-study-nestjs'
   ECS_CLUSTER_NAME: 'ford-study'
 
@@ -120,7 +121,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_NESTJS }}:${{ github.sha }}
+          tags: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
           build-args: |
             NODE_ENV=production
 
@@ -129,15 +130,8 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-definition.json
-          container-name: ${{ env.ECR_REPOSITORY_NESTJS }}
-          image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_NESTJS }}:${{ github.sha }}
-
-      - name: configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v3
-        with:
-          aws-region: ap-northeast-2
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          container-name: ${{ env.ECS_CONTAINER_NAME }}
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
