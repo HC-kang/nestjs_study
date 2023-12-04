@@ -14,9 +14,9 @@ permissions:
   pull-requests: write
 
 env:
-  ECR_REPOSITORY_NESTJS: 'nestjs-study'
-  ECS_SERVICE_NAME: 'nestjs'
-  ECS_CLUSTER_NAME: 'nestjs-study'
+  ECR_REPOSITORY_NESTJS: 'ford-study'
+  ECS_SERVICE_NAME: 'ford-study-nestjs'
+  ECS_CLUSTER_NAME: 'ford-study'
 
 jobs:
   test:
