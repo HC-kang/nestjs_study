@@ -58,13 +58,6 @@ jobs:
           test_command: "npm run test:cov"
 
       - name: Run e2e tests
-        env:
-          DATABASE_CONNECTION: 'postgres'
-          DATABASE_HOST: 'localhost'
-          DATABASE_PORT: '5432'
-          DATABASE_USERNAME: ${{ env.DATABASE_USERNAME }}
-          DATABASE_PASSWORD: ${{ env.DATABASE_PASSWORD }}
-          DATABASE_NAME: 'postgres'
         run: npm run test:e2e
 
       - name: Notify Slack on Failure
