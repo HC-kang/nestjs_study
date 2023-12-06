@@ -5,13 +5,6 @@ on:
     branches:
       - develop
 
-permissions:
-  id-token: write
-  contents: read
-
-env:
-  SHA: ${{ github.sha }}
-
 jobs:
   test:
     name: test nestjs
@@ -57,7 +50,7 @@ jobs:
           channel: ${{ vars.SLACK_CHANNEL }}
           username: ${{ vars.SLACK_USERNAME }}
           text: 'Tests failed! :x:'
-        env: 
+        env:
           SLACK_WEBHOOK_URL: ${{ vars.SLACK_WEBHOOK_URL }}
 
       - name: Notify Slack on Success
@@ -70,5 +63,5 @@ jobs:
           channel: ${{ vars.SLACK_CHANNEL }}
           username: ${{ vars.SLACK_USERNAME }}
           text: 'Tests passed! :white_check_mark:'
-        env: 
+        env:
           SLACK_WEBHOOK_URL: ${{ vars.SLACK_WEBHOOK_URL }}
