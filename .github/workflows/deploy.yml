@@ -8,8 +8,8 @@ on:
     types:
       - closed
 
-# permissions:
-#   pull-requests: write
+permissions:
+  pull-requests: write
 
 env:
   ECR_REPOSITORY: 'ford-study'
