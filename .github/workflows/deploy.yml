@@ -9,6 +9,7 @@ on:
       - closed
 
 permissions:
+  id-token: write
   pull-requests: write
 
 env:
