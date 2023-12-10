@@ -1,36 +1,32 @@
 # ----------------------------------------
 ## Build for Local development
 # ----------------------------------------
+FROM node:20-alpine as build
 
-FROM node:20-alpine as development
+WORKDIR /usr/src/app
 
-# ----------------------------------------
-## Build for production
-# ----------------------------------------
-FROM development as build
+# 레이어 캐시를 위한 종속성 파일 복사 및 설치
+COPY package*.json ./
+RUN npm ci
 
 COPY . .
 
-ENV NPM_CONFIG_LOGLEVEL warn
-ENV NODE_ENV=production
-
-# for devDependencies
-RUN NODE_ENV=development npm ci 
-RUN NODE_ENV=production npm run build
-RUN npm prune --production
-USER node
+RUN npm run build
 
 # ----------------------------------------
 ## Run for production
 # ----------------------------------------
-FROM development as production
+FROM node:20-alpine as production
 
-COPY --chown=node:node --from=build /dist /dist
-COPY --chown=node:node --from=build /node_modules /node_modules
-# COPY --chown=node:node --from=build /.env.production /.env.production
+WORKDIR /usr/src/app
+
+COPY --from=build /usr/src/app/node_modules ./node_modules
+COPY --from=build /usr/src/app/dist ./dist
 
 ENV NODE_ENV=production
 
-CMD ["node", "dist/main.js"]
-EXPOSE 3000
 USER node
+
+CMD ["node", "dist/main.js"]
+
+EXPOSE 3000
