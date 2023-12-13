@@ -9,6 +9,7 @@ export class UsersRepository {
   async create(model: UserModel): Promise<UserModel> {
     const user = await this.prisma.user.create({
       data: {
+        id: model.id,
         email: model.email,
         name: model.name,
         password: model.password,
@@ -37,7 +38,7 @@ export class UsersRepository {
         deletedAt: null,
       },
     });
-    return UserModel.fromEntity(user);
+    return user ? UserModel.fromEntity(user) : null;
   }
 
   async findByEmail(email: string): Promise<UserModel | null> {
@@ -46,7 +47,7 @@ export class UsersRepository {
         email,
       },
     });
-    return UserModel.fromEntity(user);
+    return user ? UserModel.fromEntity(user) : null;
   }
 
   async update(id: string, model: Partial<UserModel>): Promise<UserModel> {
