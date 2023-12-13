@@ -1,16 +1,24 @@
 import { Logger, Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { HealthCheckModule } from './health-check/health-check.module';
+import { HealthCheckModule } from './modules/health-check/health-check.module';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
-import { HttpExceptionFilter } from './common';
-import { HttpLoggerInterceptor } from './common/interceptors/http.logger.interceptor';
+import { HttpExceptionFilter, HttpLoggerInterceptor } from './common';
+import { UsersModule } from './modules/users/users.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [HealthCheckModule],
-  controllers: [AppController],
+  imports: [
+    ConfigModule.forRoot({
+      envFilePath: `.env.${process.env.NODE_ENV}`,
+      isGlobal: true,
+    }),
+    PrismaModule,
+    HealthCheckModule,
+    UsersModule,
+    AuthModule,
+  ],
   providers: [
-    AppService,
     Logger,
     {
       provide: APP_FILTER,
