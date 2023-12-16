@@ -1,27 +1,17 @@
-export class Ok<T> {
-  constructor(public readonly value: T) {}
-
-  isOk(): this is Ok<T> {
-    return true;
-  }
-
-  isErr(): this is Err<any> {
-    return false;
-  }
+/* eslint-disable @typescript-eslint/no-namespace */
+export interface ResponseForm<T> {
+  result: true;
+  status: number;
+  errorCode: 1000;
+  data: T;
 }
 
-export class Err<E> {
-  constructor(public readonly error: E) {}
+export type ERROR = {
+  result: false;
+  status: number;
+  errorCode: number;
+  data: string;
+};
 
-  isOk(): this is Ok<any> {
-    return false;
-  }
-
-  isErr(): this is Err<E> {
-    return true;
-  }
-}
-
-export type Maybe<T> = T | null;
-
-export type Result<T, E = Error> = Ok<T> | Err<E>;
+export type Try<T> = ResponseForm<T>;
+export type TryCatch<T, E extends ERROR> = ResponseForm<T> | E;

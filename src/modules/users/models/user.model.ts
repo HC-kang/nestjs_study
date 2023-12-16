@@ -1,4 +1,4 @@
-import { Role, User } from '@prisma/client';
+import { UserRole, User, UserStatus } from '@prisma/client';
 import { UserEntity } from '../entities/user.entity';
 
 export type UserWithoutPassword = Omit<User, 'password'>;
@@ -8,7 +8,9 @@ export class UserModel {
   email: string;
   name: string;
   password: string;
-  role: Role;
+  role: UserRole;
+  status: UserStatus;
+  emailVerifiedAt: Date | null;
 
   static fromEntity(entity: User): UserModel {
     const userModel = new UserModel();
@@ -17,6 +19,8 @@ export class UserModel {
     userModel.name = entity.name;
     userModel.password = entity.password;
     userModel.role = entity.role;
+    userModel.status = entity.status;
+    userModel.emailVerifiedAt = entity.emailVerifiedAt;
     return userModel;
   }
 
@@ -27,6 +31,8 @@ export class UserModel {
       name: this.name,
       password: this.password,
       role: this.role,
+      status: this.status,
+      emailVerifiedAt: this.emailVerifiedAt,
     });
     return userEntity;
   }
@@ -37,6 +43,8 @@ export class UserModel {
       email: this.email,
       name: this.name,
       role: this.role,
+      status: this.status,
+      emailVerifiedAt: this.emailVerifiedAt,
     } as UserWithoutPassword;
   }
 }

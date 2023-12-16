@@ -13,57 +13,87 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { AccessTokenPayload } from '../auth/dto/access-token-payload.dto';
 import { Auth, AuthUser } from '@/common/decorators';
-import { Role } from '@prisma/client';
-import { HandleResult } from '@/common/decorators/handle-result.decorator';
+import { UserRole } from '@prisma/client';
+import { UserWithoutPassword } from './models/user.model';
+import {
+  ALREADY_EXIST_EMAIL,
+  USER_NOT_FOUND,
+  isErrorGuard,
+} from '@/common/errors';
+import { StandardException } from '@/common/exceptions';
+import { TokenPayloadDto } from '../auth/dto/token-payload.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post('/register')
-  @HandleResult()
-  async registerUser(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.registerUser(createUserDto);
+  async registerUser(
+    @Body() createUserDto: CreateUserDto,
+  ): Promise<UserWithoutPassword> {
+    const user = await this.usersService.registerUser(createUserDto);
+    if (isErrorGuard(user)) {
+      throw new StandardException(ALREADY_EXIST_EMAIL);
+    }
+    return user;
   }
 
   @Post('/login')
-  @HandleResult()
-  async login(@Body() loginUserDto: LoginUserDto) {
-    return this.usersService.login(loginUserDto);
+  async login(@Body() loginUserDto: LoginUserDto): Promise<TokenPayloadDto> {
+    const token = await this.usersService.login(loginUserDto);
+    if (isErrorGuard(token)) {
+      throw new StandardException(USER_NOT_FOUND);
+    }
+    return token;
   }
 
   @Get('/me')
-  @Auth([Role.ADMIN, Role.USER])
-  @HandleResult()
+  @Auth([UserRole.ADMIN, UserRole.USER])
   async me(@AuthUser() tokenPayload: AccessTokenPayload) {
-    return await this.usersService.findOne(tokenPayload.userId);
+    const me = await this.usersService.findOne(tokenPayload.userId);
+    if (isErrorGuard(me)) {
+      throw new StandardException(USER_NOT_FOUND);
+    }
+    return me;
   }
 
   @Get()
-  @Auth([Role.ADMIN])
-  @HandleResult()
+  @Auth([UserRole.ADMIN])
   async findAll() {
     return this.usersService.findAll();
   }
 
   @Get(':id')
-  @Auth([Role.ADMIN, Role.USER])
-  @HandleResult()
-  async findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id);
+  @Auth([UserRole.ADMIN, UserRole.USER])
+  async findOne(@Param('id') id: string): Promise<UserWithoutPassword> {
+    const user = await this.usersService.findOne(id);
+    if (isErrorGuard(user)) {
+      throw new StandardException(USER_NOT_FOUND);
+    }
+    return user;
   }
 
   @Patch(':id')
-  @Auth([Role.ADMIN, Role.USER])
-  @HandleResult()
+  @Auth([UserRole.ADMIN, UserRole.USER])
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
   }
 
   @Delete(':id')
-  @Auth([Role.ADMIN, Role.USER])
-  @HandleResult()
+  @Auth([UserRole.ADMIN, UserRole.USER])
   async remove(@Param('id') id: string) {
     return this.usersService.remove(id);
+  }
+
+  @Patch(':id/activate')
+  @Auth([UserRole.ADMIN])
+  async activate(@Param('id') id: string) {
+    return this.usersService.activateUser(id);
+  }
+
+  @Patch(':id/deactivate')
+  @Auth([UserRole.ADMIN])
+  async deactivate(@Param('id') id: string) {
+    return this.usersService.deactivateUser(id);
   }
 }

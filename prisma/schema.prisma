@@ -10,22 +10,30 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
+enum UserRole {
   ADMIN
   USER
 }
 
+enum UserStatus {
+  PENDING
+  ACTIVE
+  INACTIVE
+}
+
 model User {
-  id        String    @id @default(uuid())
-  email     String    @unique
-  password  String
-  name      String?
-  role      Role      @default(USER)
-  posts     Post[]
-  todos     Todo[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
+  id              String     @id @default(uuid())
+  email           String
+  password        String
+  name            String?
+  role            UserRole   @default(USER)
+  status          UserStatus @default(PENDING)
+  posts           Post[]
+  todos           Todo[]
+  emailVerifiedAt DateTime?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  deletedAt       DateTime?
 
   @@map(name: "users")
 }

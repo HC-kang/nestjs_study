@@ -1,6 +1,6 @@
-import { applyDecorators, UseInterceptors } from '@nestjs/common';
-import { ResultInterceptor } from '../interceptors';
+// import { applyDecorators, UseInterceptors } from '@nestjs/common';
+// import { ResultInterceptor } from '../interceptors';
 
-export function HandleResult() {
-  return applyDecorators(UseInterceptors(ResultInterceptor));
-}
+// export function HandleResult() {
+//   return applyDecorators(UseInterceptors(ResultInterceptor));
+// }

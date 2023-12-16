@@ -1,6 +1,6 @@
 import { TOKEN_TYPE } from '@/common/resources';
 import { ApiProperty } from '@nestjs/swagger';
-import { Role } from '@prisma/client';
+import { UserRole } from '@prisma/client';
 
 export class AccessTokenPayload {
   @ApiProperty()
@@ -10,5 +10,5 @@ export class AccessTokenPayload {
   type: TOKEN_TYPE;
 
   @ApiProperty()
-  role: Role;
+  role: UserRole;
 }

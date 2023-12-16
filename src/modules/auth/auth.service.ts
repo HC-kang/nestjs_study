@@ -6,7 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { TokenPayloadDto } from './dto/token-payload.dto';
 import { toSeconds } from '@/common/utils';
 import { AccessTokenPayload } from './dto/access-token-payload.dto';
-import { Role } from '@prisma/client';
+import { UserRole } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -25,7 +25,7 @@ export class AuthService {
   }
 
   async createAccessToken(data: {
-    role: Role;
+    role: UserRole;
     userId: string;
   }): Promise<TokenPayloadDto> {
     return new TokenPayloadDto({
@@ -43,7 +43,7 @@ export class AuthService {
       const result = await this.jwtService.verify(token);
       return result;
     } catch (err) {
-      throw new UnauthorizedException(messages.UNAUTHORIZED_EXCEPTION);
+      throw new UnauthorizedException(messages.UNAUTHORIZED);
     }
   }
 }

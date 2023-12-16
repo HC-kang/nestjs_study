@@ -12,8 +12,8 @@ import { TokenPayloadDto } from '../auth/dto/token-payload.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { UserModel, UserWithoutPassword } from './models/user.model';
-import { Role } from '@prisma/client';
-import { Ok, Result } from '@/common/types';
+import { UserRole, UserStatus } from '@prisma/client';
+import { ALREADY_EXIST_EMAIL, USER_NOT_FOUND } from '@/common/errors';
 
 @Injectable()
 export class UsersService {
@@ -27,133 +27,132 @@ export class UsersService {
     email,
     name,
     password,
-  }: CreateUserDto): Promise<Result<UserWithoutPassword>> {
+  }: CreateUserDto): Promise<UserWithoutPassword | ALREADY_EXIST_EMAIL> {
     const emailExists = await this.checkEmailExists(email);
-    if (emailExists.isErr()) {
-      this.logger.error(emailExists.error);
-      throw emailExists.error;
-    }
-    if (emailExists.value) {
-      throw new UnprocessableEntityException(
-        messages.USER_ALREADY_EXISTS_EXCEPTION,
-      );
+    if (emailExists) {
+      return ALREADY_EXIST_EMAIL;
     }
     const userModel = await this.saveUser(name, email, password);
-    if (userModel.isErr()) {
-      this.logger.error(userModel.error);
-      throw userModel.error;
-    }
-    return new Ok(userModel.value.toUserWithoutPassword());
+    return userModel.toUserWithoutPassword();
   }
 
   async login({
     email,
     password,
-  }: LoginUserDto): Promise<Result<TokenPayloadDto>> {
+  }: LoginUserDto): Promise<TokenPayloadDto | USER_NOT_FOUND> {
     const userModel = await this.usersRepository.findByEmail(email);
-    if (userModel.isErr()) {
-      this.logger.error(userModel.error);
-      throw userModel.error;
+    if (!userModel) {
+      return USER_NOT_FOUND;
     }
-    if (!userModel.value) {
-      throw new UnprocessableEntityException(messages.USER_NOT_FOUND_EXCEPTION);
-    }
+
     const isPasswordValid = await this.authService.comparePasswords(
       password,
-      userModel.value.password,
+      userModel.password,
     );
     if (!isPasswordValid) {
-      throw new UnprocessableEntityException(messages.USER_NOT_FOUND_EXCEPTION);
+      return USER_NOT_FOUND;
     }
 
     const token = await this.authService.createAccessToken({
-      role: userModel.value.role as Role,
-      userId: userModel.value.id,
+      role: userModel.role as UserRole,
+      userId: userModel.id,
     });
-    return new Ok(token);
+    return token;
   }
 
-  async findAll(): Promise<Result<UserWithoutPassword[]>> {
+  async findAll(): Promise<UserWithoutPassword[]> {
     const userModels = await this.usersRepository.findAll();
-    if (userModels.isErr()) {
-      this.logger.error(userModels.error);
-      throw userModels.error;
-    }
-    return new Ok(userModels.value.map((user) => user.toUserWithoutPassword()));
+    return userModels.map((user) => user.toUserWithoutPassword());
   }
 
-  async findOne(id: string): Promise<Result<UserWithoutPassword>> {
+  async findOne(id: string): Promise<UserWithoutPassword | USER_NOT_FOUND> {
     const userModel = await this.usersRepository.findOne(id);
-    if (userModel.isErr()) {
-      this.logger.error(userModel.error);
-      throw userModel.error;
-    }
     if (!userModel) {
-      throw new UnprocessableEntityException(messages.USER_NOT_FOUND_EXCEPTION);
+      return USER_NOT_FOUND;
     }
-    return new Ok(userModel.value.toUserWithoutPassword());
+    return userModel.toUserWithoutPassword();
   }
 
   async update(
     id: string,
     updateUserDto: UpdateUserDto,
-  ): Promise<Result<UserWithoutPassword>> {
+  ): Promise<UserWithoutPassword> {
     const user = await this.usersRepository.findOne(id);
-    if (user.isErr()) {
-      this.logger.error(user.error);
-      throw user.error;
-    }
-    if (!user.value) {
-      throw new UnprocessableEntityException(messages.USER_NOT_FOUND_EXCEPTION);
+    if (!user) {
+      throw new UnprocessableEntityException(messages.USER_NOT_FOUND);
     }
     const userModel = {
       id,
       ...updateUserDto,
     } as UserModel;
     const updatedUser = await this.usersRepository.update(id, userModel);
-    if (updatedUser.isErr()) {
-      this.logger.error(updatedUser.error);
-      throw updatedUser.error;
-    }
-    return new Ok(updatedUser.value.toUserWithoutPassword());
+    return updatedUser.toUserWithoutPassword();
   }
 
-  async remove(id: string): Promise<Result<UserWithoutPassword>> {
-    const removedUser = await this.usersRepository.remove(id);
-    if (removedUser.isErr()) {
-      this.logger.error(removedUser.error);
-      throw removedUser.error;
-    }
-    return new Ok(removedUser.value.toUserWithoutPassword());
+  async remove(id: string) {
+    const removedUser = await this.usersRepository.findOne(id);
+    return removedUser.toUserWithoutPassword();
   }
 
-  private async checkEmailExists(email: string): Promise<Result<boolean>> {
-    const user = await this.usersRepository.findByEmail(email);
-    if (user.isErr()) {
-      this.logger.error(user);
-      throw new UnprocessableEntityException(
-        messages.UNPROCESSABLE_ENTITY_EXCEPTION,
-      );
+  async activateUser(id: string): Promise<UserWithoutPassword> {
+    try {
+      const user = await this.usersRepository.findOne(id);
+      if (!user) {
+        throw new UnprocessableEntityException(messages.USER_NOT_FOUND);
+      }
+      const updatedUser = await this.updateStatus(id, UserStatus.ACTIVE);
+      return updatedUser.toUserWithoutPassword();
+    } catch (err) {
+      this.logger.error(err);
+      throw err;
     }
-    return new Ok(!!user.value);
+  }
+
+  async deactivateUser(id: string): Promise<UserWithoutPassword> {
+    try {
+      const user = await this.usersRepository.findOne(id);
+      if (!user) {
+        throw new UnprocessableEntityException(messages.USER_NOT_FOUND);
+      }
+      const updatedUser = await this.updateStatus(id, UserStatus.INACTIVE);
+      return updatedUser.toUserWithoutPassword();
+    } catch (err) {
+      this.logger.error(err);
+      throw err;
+    }
+  }
+
+  private async updateStatus(
+    id: string,
+    status: UserStatus,
+  ): Promise<UserModel> {
+    try {
+      const user = await this.usersRepository.update(id, {
+        status,
+      } as UserModel);
+      return user;
+    } catch (err) {
+      this.logger.error(err);
+      throw new UnprocessableEntityException(messages.USER_UPDATE_FAILED);
+    }
+  }
+
+  private async checkEmailExists(email: string): Promise<boolean> {
+    const user = await this.usersRepository.findByEmailTrashed(email);
+    return !!user;
   }
 
   private async saveUser(
     name: string,
     email: string,
     password: string,
-  ): Promise<Result<UserModel>> {
+  ): Promise<UserModel> {
     const user = await this.usersRepository.create({
       id: uuidv4(),
       name,
       email,
       password: await this.authService.hashPassword(password),
     } as UserModel);
-    if (user.isErr()) {
-      throw new UnprocessableEntityException(
-        messages.USER_REGISTER_FAILED_EXCEPTION,
-      );
-    }
     return user;
   }
 }
