@@ -90,10 +90,11 @@ export class UsersService {
   }
 
   async remove(id: string): Promise<UserWithoutPassword | USER_NOT_FOUND> {
-    const removedUser = await this.usersRepository.findOne(id);
-    if (!removedUser) {
+    const user = await this.usersRepository.findOne(id);
+    if (!user) {
       throw new UnprocessableEntityException(messages.USER_NOT_FOUND);
     }
+    const removedUser = await this.usersRepository.remove(id);
     return removedUser.toUserWithoutPassword();
   }
 
@@ -138,12 +139,11 @@ export class UsersService {
     email: string,
     password: string,
   ): Promise<UserModel> {
-    const user = await this.usersRepository.create({
+    return await this.usersRepository.create({
       id: uuidv4(),
       name,
       email,
       password: await this.authService.hashPassword(password),
     } as UserModel);
-    return user;
   }
 }

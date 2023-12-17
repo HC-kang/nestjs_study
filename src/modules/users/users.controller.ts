@@ -49,7 +49,9 @@ export class UsersController {
 
   @Get('/me')
   @Auth([UserRole.ADMIN, UserRole.USER])
-  async me(@AuthUser() tokenPayload: AccessTokenPayload) {
+  async me(
+    @AuthUser() tokenPayload: AccessTokenPayload,
+  ): Promise<UserWithoutPassword> {
     const me = await this.usersService.findOne(tokenPayload.userId);
     if (isErrorGuard(me)) {
       throw new StandardException(USER_NOT_FOUND);
@@ -59,7 +61,7 @@ export class UsersController {
 
   @Get()
   @Auth([UserRole.ADMIN])
-  async findAll() {
+  async findAll(): Promise<UserWithoutPassword[]> {
     return this.usersService.findAll();
   }
 
@@ -75,25 +77,44 @@ export class UsersController {
 
   @Patch(':id')
   @Auth([UserRole.ADMIN, UserRole.USER])
-  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(id, updateUserDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<UserWithoutPassword> {
+    const user = await this.usersService.update(id, updateUserDto);
+    if (isErrorGuard(user)) {
+      throw new StandardException(USER_NOT_FOUND);
+    }
+    return user;
   }
 
   @Delete(':id')
   @Auth([UserRole.ADMIN, UserRole.USER])
-  async remove(@Param('id') id: string) {
-    return this.usersService.remove(id);
+  async remove(@Param('id') id: string): Promise<UserWithoutPassword> {
+    const user = await this.usersService.remove(id);
+    if (isErrorGuard(user)) {
+      throw new StandardException(USER_NOT_FOUND);
+    }
+    return user;
   }
 
   @Patch(':id/activate')
   @Auth([UserRole.ADMIN])
-  async activate(@Param('id') id: string) {
-    return this.usersService.activateUser(id);
+  async activate(@Param('id') id: string): Promise<UserWithoutPassword> {
+    const user = await this.usersService.activateUser(id);
+    if (isErrorGuard(user)) {
+      throw new StandardException(USER_NOT_FOUND);
+    }
+    return user;
   }
 
   @Patch(':id/deactivate')
   @Auth([UserRole.ADMIN])
   async deactivate(@Param('id') id: string) {
-    return this.usersService.deactivateUser(id);
+    const user = await this.usersService.deactivateUser(id);
+    if (isErrorGuard(user)) {
+      throw new StandardException(USER_NOT_FOUND);
+    }
+    return user;
   }
 }
