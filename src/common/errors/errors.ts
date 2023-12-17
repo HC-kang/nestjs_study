@@ -24,3 +24,11 @@ export const UNAUTHORIZED_USER = {
   errorCode: 4006,
   data: messages.UNAUTHORIZED_USER,
 } as const;
+
+export const TODO_NOT_FOUND = {
+  result: false,
+  status: 404,
+  errorCode: 4007,
+  data: messages.TODO_NOT_FOUND,
+} as const;
+export type TODO_NOT_FOUND = ERROR & typeof TODO_NOT_FOUND;

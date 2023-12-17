@@ -11,4 +11,7 @@ export const messages = {
   ALREADY_EXIST_EMAIL: '이미 존재하는 이메일입니다.',
   USER_REGISTER_FAILED: '사용자 등록에 실패했습니다.',
   USER_UPDATE_FAILED: '사용자 정보 수정에 실패했습니다.',
+
+  // Todo
+  TODO_NOT_FOUND: '할 일을 찾을 수 없습니다.',
 };
