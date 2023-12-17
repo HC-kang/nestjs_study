@@ -76,10 +76,10 @@ export class UsersService {
   async update(
     id: string,
     updateUserDto: UpdateUserDto,
-  ): Promise<UserWithoutPassword> {
+  ): Promise<UserWithoutPassword | USER_NOT_FOUND> {
     const user = await this.usersRepository.findOne(id);
     if (!user) {
-      throw new UnprocessableEntityException(messages.USER_NOT_FOUND);
+      return USER_NOT_FOUND;
     }
     const userModel = {
       id,
@@ -89,52 +89,43 @@ export class UsersService {
     return updatedUser.toUserWithoutPassword();
   }
 
-  async remove(id: string) {
+  async remove(id: string): Promise<UserWithoutPassword | USER_NOT_FOUND> {
     const removedUser = await this.usersRepository.findOne(id);
+    if (!removedUser) {
+      throw new UnprocessableEntityException(messages.USER_NOT_FOUND);
+    }
     return removedUser.toUserWithoutPassword();
   }
 
-  async activateUser(id: string): Promise<UserWithoutPassword> {
-    try {
-      const user = await this.usersRepository.findOne(id);
-      if (!user) {
-        throw new UnprocessableEntityException(messages.USER_NOT_FOUND);
-      }
-      const updatedUser = await this.updateStatus(id, UserStatus.ACTIVE);
-      return updatedUser.toUserWithoutPassword();
-    } catch (err) {
-      this.logger.error(err);
-      throw err;
+  async activateUser(
+    id: string,
+  ): Promise<UserWithoutPassword | USER_NOT_FOUND> {
+    const user = await this.usersRepository.findOne(id);
+    if (!user) {
+      return USER_NOT_FOUND;
     }
+    const updatedUser = await this.updateStatus(id, UserStatus.ACTIVE);
+    return updatedUser.toUserWithoutPassword();
   }
 
-  async deactivateUser(id: string): Promise<UserWithoutPassword> {
-    try {
-      const user = await this.usersRepository.findOne(id);
-      if (!user) {
-        throw new UnprocessableEntityException(messages.USER_NOT_FOUND);
-      }
-      const updatedUser = await this.updateStatus(id, UserStatus.INACTIVE);
-      return updatedUser.toUserWithoutPassword();
-    } catch (err) {
-      this.logger.error(err);
-      throw err;
+  async deactivateUser(
+    id: string,
+  ): Promise<UserWithoutPassword | USER_NOT_FOUND> {
+    const user = await this.usersRepository.findOne(id);
+    if (!user) {
+      return USER_NOT_FOUND;
     }
+    const updatedUser = await this.updateStatus(id, UserStatus.INACTIVE);
+    return updatedUser.toUserWithoutPassword();
   }
 
   private async updateStatus(
     id: string,
     status: UserStatus,
   ): Promise<UserModel> {
-    try {
-      const user = await this.usersRepository.update(id, {
-        status,
-      } as UserModel);
-      return user;
-    } catch (err) {
-      this.logger.error(err);
-      throw new UnprocessableEntityException(messages.USER_UPDATE_FAILED);
-    }
+    return await this.usersRepository.update(id, {
+      status,
+    } as UserModel);
   }
 
   private async checkEmailExists(email: string): Promise<boolean> {

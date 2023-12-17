@@ -4,7 +4,7 @@ export const messages = {
   UNPROCESSABLE_ENTITY: '잘못된 요청입니다.',
 
   // Auth
-  UNAUTHORIZED: '인증되지 않은 사용자입니다.',
+  UNAUTHORIZED_USER: '인증되지 않은 사용자입니다.',
 
   // User
   USER_NOT_FOUND: '사용자를 찾을 수 없습니다.',

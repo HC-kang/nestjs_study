@@ -1,12 +1,13 @@
-import { TOKEN_TYPE, messages } from '@/common/resources';
+import { TOKEN_TYPE } from '@/common/resources';
 import { required } from '@/config';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { TokenPayloadDto } from './dto/token-payload.dto';
 import { toSeconds } from '@/common/utils';
 import { AccessTokenPayload } from './dto/access-token-payload.dto';
 import { UserRole } from '@prisma/client';
+import { UNAUTHORIZED_USER } from '@/common/errors';
 
 @Injectable()
 export class AuthService {
@@ -38,12 +39,10 @@ export class AuthService {
     });
   }
 
-  async verifyAccessToken(token: string): Promise<AccessTokenPayload> {
-    try {
-      const result = await this.jwtService.verify(token);
-      return result;
-    } catch (err) {
-      throw new UnauthorizedException(messages.UNAUTHORIZED);
-    }
+  async verifyAccessToken(
+    token: string,
+  ): Promise<AccessTokenPayload | UNAUTHORIZED_USER> {
+    const result = await this.jwtService.verify(token);
+    return result;
   }
 }

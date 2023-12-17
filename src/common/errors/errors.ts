@@ -16,3 +16,11 @@ export const ALREADY_EXIST_EMAIL = {
   errorCode: 4005,
   data: messages.ALREADY_EXIST_EMAIL,
 } as const;
+
+export type UNAUTHORIZED_USER = ERROR & typeof UNAUTHORIZED_USER;
+export const UNAUTHORIZED_USER = {
+  result: false,
+  status: 401,
+  errorCode: 4006,
+  data: messages.UNAUTHORIZED_USER,
+} as const;

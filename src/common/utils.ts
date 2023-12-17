@@ -1,5 +1,4 @@
 import { v4 as uuidv4 } from 'uuid';
-import { ERROR, Try, TryCatch } from './types';
 
 export const toSeconds = (input: string) => {
   const units = {
@@ -56,33 +55,3 @@ export const generateUUIDs = (keys) => {
 };
 
 export const formattedString = (str: string) => JSON.stringify(str, null, 2);
-
-export function tryCatch<T, E extends ERROR>(
-  fn: () => T,
-  someError = {
-    result: false,
-    status: 500,
-    errorCode: 5000,
-    data: 'Internal Server Error',
-  } as E,
-): TryCatch<T, E> {
-  try {
-    const data = fn();
-    return { result: true, status: 200, errorCode: 1000, data: data } as Try<T>;
-  } catch (error) {
-    if (someError && error instanceof someError.constructor) {
-      return someError;
-    }
-    // Check if the error is one of the custom errors and set the code accordingly
-    // if (error instanceof NotFoundError || error instanceof ValidationError) {
-    //   return { result: false, code: error.code, data: error.message };
-    // }
-    // Default error handling
-    return {
-      result: false,
-      status: 500,
-      errorCode: 5000,
-      data: 'Internal Server Error',
-    } as E;
-  }
-}

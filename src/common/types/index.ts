@@ -12,6 +12,3 @@ export type ERROR = {
   errorCode: number;
   data: string;
 };
-
-export type Try<T> = ResponseForm<T>;
-export type TryCatch<T, E extends ERROR> = ResponseForm<T> | E;
