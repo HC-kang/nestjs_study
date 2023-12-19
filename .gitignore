@@ -8,8 +8,7 @@
 /node_modules
 
 # Logs
-logs/*
-!logs/.gitkeep
+logs
 *.log
 npm-debug.log*
 pnpm-debug.log*

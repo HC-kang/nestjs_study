@@ -25,6 +25,8 @@ WORKDIR /usr/src/app
 COPY --from=build /usr/src/app/node_modules ./node_modules
 COPY --from=build /usr/src/app/dist ./dist
 
+RUN mkdir logs
+
 RUN echo "DATABASE_URL=${DATABASE_URL}" >> .env
 RUN echo "JWT_SECRET=${JWT_SECRET}" > .env
 RUN echo "JWT_EXPIRES_IN=${JWT_EXPIRES_IN}" >> .env
