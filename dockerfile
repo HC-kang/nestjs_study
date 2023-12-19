@@ -32,10 +32,10 @@ COPY --from=build /usr/src/app/dist ./dist
 
 RUN mkdir logs
 
-RUN echo "DATABASE_URL=$DATABASE_URL" >> .env
-RUN echo "JWT_SECRET=$JWT_SECRET" >> .env
-RUN echo "JWT_EXPIRES_IN=$JWT_EXPIRES_IN" >> .env
-RUN echo "SLACK_INC_WEBHOOK_URL=$SLACK_INC_WEBHOOK_URL" >> .env
+RUN echo "DATABASE_URL=$DATABASE_URL" >> .env.production
+RUN echo "JWT_SECRET=$JWT_SECRET" >> .env.production
+RUN echo "JWT_EXPIRES_IN=$JWT_EXPIRES_IN" >> .env.production
+RUN echo "SLACK_INC_WEBHOOK_URL=$SLACK_INC_WEBHOOK_URL" >> .env.production
 
 ENV NODE_ENV=production
 
