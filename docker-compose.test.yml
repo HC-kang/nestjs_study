@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  app:
+    container_name: nestjs-study
+    build:
+      context: .
+      dockerfile: dockerfile.test
+    depends_on:
+      - postgres
+
+  postgres:
+    container_name: postgres
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: postgres

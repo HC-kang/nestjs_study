@@ -1,0 +1,15 @@
+FROM node:20-alpine as test
+
+WORKDIR /usr/src/app
+
+# 레이어 캐시를 위한 종속성 파일 복사 및 설치
+COPY package*.json ./
+RUN npm ci
+
+COPY . .
+
+ENV NODE_ENV=test
+
+USER node
+
+CMD ["npm", "run", "test:e2e"]
