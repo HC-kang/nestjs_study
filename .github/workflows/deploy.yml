@@ -26,6 +26,17 @@ jobs:
       NODE_ENV: test
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/mydb?schema=public
 
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.1
@@ -49,6 +60,14 @@ jobs:
 
       - name: Run lint
         run: npm run lint
+      
+      - name: Check database state
+        run: |
+          sudo apt-get install -y postgresql-client
+          PGPASSWORD=postgres psql -h localhost -U postgres -d postgres -c "\dt"
+
+      - name: Run migrations
+        run: npx prisma migrate dev --preview-feature
 
       - name: Run tests
         run: npm run test
