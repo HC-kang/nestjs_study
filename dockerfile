@@ -11,6 +11,8 @@ RUN npm ci
 
 COPY . .
 
+RUN npx prisma generate
+
 RUN npm run build
 
 # ----------------------------------------
@@ -31,8 +33,6 @@ RUN echo "SLACK_INC_WEBHOOK_URL=${SLACK_INC_WEBHOOK_URL}" >> .env
 ENV NODE_ENV=production
 
 USER node
-
-RUN npx prisma generate
 
 CMD ["node", "dist/main.js"]
 
