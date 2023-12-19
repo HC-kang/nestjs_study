@@ -9,6 +9,8 @@ jobs:
   test:
     name: test nestjs
     runs-on: ubuntu-22.04
+    env:
+      NODE_ENV: test
 
     services:
       postgres:
