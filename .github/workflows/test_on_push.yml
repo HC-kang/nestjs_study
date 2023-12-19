@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-22.04
     env:
       NODE_ENV: test
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/mydb?schema=public
 
     services:
       postgres:
