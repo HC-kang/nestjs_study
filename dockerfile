@@ -32,6 +32,8 @@ ENV NODE_ENV=production
 
 USER node
 
+RUN npx prisma generate
+
 CMD ["node", "dist/main.js"]
 
 EXPOSE 3000

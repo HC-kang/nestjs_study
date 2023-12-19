@@ -12,4 +12,6 @@ ENV NODE_ENV=development
 
 USER node
 
+RUN npx prisma generate
+
 CMD ["npm", "run", "start:dev"]
