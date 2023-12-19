@@ -20,6 +20,11 @@ RUN npm run build
 # ----------------------------------------
 FROM node:20-alpine as production
 
+ARG DATABASE_URL
+ARG JWT_SECRET
+ARG JWT_EXPIRES_IN
+ARG SLACK_INC_WEBHOOK_URL
+
 WORKDIR /usr/src/app
 
 COPY --from=build /usr/src/app/node_modules ./node_modules
@@ -27,10 +32,10 @@ COPY --from=build /usr/src/app/dist ./dist
 
 RUN mkdir logs
 
-RUN echo "DATABASE_URL=${DATABASE_URL}" >> .env
-RUN echo "JWT_SECRET=${JWT_SECRET}" > .env
-RUN echo "JWT_EXPIRES_IN=${JWT_EXPIRES_IN}" >> .env
-RUN echo "SLACK_INC_WEBHOOK_URL=${SLACK_INC_WEBHOOK_URL}" >> .env
+RUN echo "DATABASE_URL=$DATABASE_URL" >> .env
+RUN echo "JWT_SECRET=$JWT_SECRET" >> .env
+RUN echo "JWT_EXPIRES_IN=$JWT_EXPIRES_IN" >> .env
+RUN echo "SLACK_INC_WEBHOOK_URL=$SLACK_INC_WEBHOOK_URL" >> .env
 
 ENV NODE_ENV=production
 
