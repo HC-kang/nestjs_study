@@ -3,14 +3,15 @@ import {
   NestInterceptor,
   ExecutionContext,
   CallHandler,
-  Logger,
+  Inject,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
+import { LoggerKey, CustomLogger } from '../logger/interfaces';
 
 @Injectable()
 export class HttpLoggerInterceptor implements NestInterceptor {
-  constructor(private readonly logger: Logger) {}
+  constructor(@Inject(LoggerKey) private logger: CustomLogger) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const now = Date.now();
@@ -35,7 +36,13 @@ export class HttpLoggerInterceptor implements NestInterceptor {
     const req = httpContext.getRequest();
     const res = httpContext.getResponse();
 
-    const { method, originalUrl, ip, headers: reqHeaders, body: reqBody } = req;
+    const {
+      method,
+      originalUrl,
+      ip,
+      headers: _reqHeaders,
+      body: _reqBody,
+    } = req;
     const statusCode = error?.status || res.statusCode;
     const contentLength = res.get('content-length') || 0;
     const userAgent = req.get('user-agent') || '';
@@ -52,16 +59,16 @@ export class HttpLoggerInterceptor implements NestInterceptor {
     };
 
     if (error) {
-      this.logger.log(JSON.stringify({ ...logJson, error: error.message }));
+      this.logger.info(JSON.stringify({ ...logJson, error: error.message }));
     } else {
-      this.logger.log(JSON.stringify(logJson));
+      this.logger.info(JSON.stringify(logJson));
     }
 
     // 추가적으로 reqHeaders, reqBody를 로깅하고 싶다면 아래 주석을 해제하세요.
-    // this.logger.log(
+    // this.logger.info(
     //   JSON.stringify({
-    //     Headers: reqHeaders,
-    //     Body: reqBody,
+    //     Headers: _reqHeaders,
+    //     Body: _reqBody,
     //   }),
     // );
   }

@@ -1,14 +1,14 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { WinstonLogger } from './config';
 import { ValidationPipe } from '@nestjs/common';
+import { LoggerServiceAdapter } from '@common/logger/logger-service.adapter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    logger: WinstonLogger,
-    abortOnError: true,
+    bufferLogs: true,
   });
 
+  app.useLogger(app.get(LoggerServiceAdapter));
   app.setGlobalPrefix('/api');
   app.useGlobalPipes(new ValidationPipe());
 
