@@ -12,6 +12,4 @@ ENV NODE_ENV=test
 
 USER node
 
-RUN npx prisma generate
-
 CMD ["npm", "run", "test:e2e"]
