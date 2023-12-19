@@ -1,6 +1,6 @@
 import * as winston from 'winston';
 import { Inject, Injectable } from '@nestjs/common';
-import { CustomLogger, LogData, LogLevel } from '@common/logger/interfaces';
+import { CustomLogger, LogData, LogLevel } from '@/common/logger/interfaces';
 
 export const WinstonLoggerTransportsKey = Symbol();
 

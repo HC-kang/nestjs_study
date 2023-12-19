@@ -1,5 +1,5 @@
 import { ConsoleLogger } from '@nestjs/common';
-import { CustomLogger } from '@common/logger/interfaces';
+import { CustomLogger } from '@/common/logger/interfaces';
 import { LoggerService } from '@nestjs/common/services/logger.service';
 
 export class LoggerServiceAdapter

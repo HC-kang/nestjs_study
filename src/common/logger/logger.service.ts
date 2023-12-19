@@ -5,11 +5,11 @@ import {
   LoggerBaseKey,
   LogData,
   LogLevel,
-} from '@common/logger/interfaces';
+} from '@/common/logger/interfaces';
 import {
   ClsContextStorageService,
   ContextStorageServiceKey,
-} from '@common/context/cls-context-storage.service';
+} from '@/common/context/cls-context-storage.service';
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class LoggerService implements CustomLogger {

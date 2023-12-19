@@ -1,5 +1,5 @@
 import { BadRequestException, Inject } from '@nestjs/common';
-import { CustomLogger, LoggerKey } from '@common/logger/interfaces';
+import { CustomLogger, LoggerKey } from '@/common/logger/interfaces';
 import {
   ArgumentsHost,
   Catch,

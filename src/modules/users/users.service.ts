@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  Logger,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository } from './users.repository';
@@ -18,7 +14,6 @@ import { ALREADY_EXIST_EMAIL, USER_NOT_FOUND } from '@/common/errors';
 @Injectable()
 export class UsersService {
   constructor(
-    private readonly logger: Logger,
     private readonly authService: AuthService,
     private readonly usersRepository: UsersRepository,
   ) {}

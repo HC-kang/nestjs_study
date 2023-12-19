@@ -1,5 +1,5 @@
 import * as winston from 'winston';
-import { LogLevel } from '@common/logger/interfaces';
+import { LogLevel } from '@/common/logger/interfaces';
 
 enum LogColors {
   red = '\x1b[31m',

@@ -2,15 +2,15 @@ import { Global, Module } from '@nestjs/common';
 import {
   WinstonLogger,
   WinstonLoggerTransportsKey,
-} from '@common/logger/winston/winston-logger';
+} from '@/common/logger/winston/winston-logger';
 import {
   CustomLogger,
   LoggerBaseKey,
   LoggerKey,
-} from '@common/logger/interfaces';
-import { LoggerServiceAdapter } from '@common/logger/logger-service.adapter';
-import { ConfigService } from '@common/config/config.service';
-import { LoggerService } from '@common/logger/logger.service';
+} from '@/common/logger/interfaces';
+import { LoggerServiceAdapter } from '@/common/logger/logger-service.adapter';
+import { ConfigService } from '@/common/config/config.service';
+import { LoggerService } from '@/common/logger/logger.service';
 import {
   ConsoleTransport,
   FileTransport,

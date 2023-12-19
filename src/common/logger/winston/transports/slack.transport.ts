@@ -1,4 +1,4 @@
-import { LogLevel } from '@common/logger/interfaces';
+import { LogLevel } from '@/common/logger/interfaces';
 import * as SlackHook from 'winston-slack-webhook-transport';
 
 export class SlackTransport {
