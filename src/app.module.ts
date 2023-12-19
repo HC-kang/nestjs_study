@@ -7,10 +7,12 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ConfigModule } from '@common/config/config.module';
 import { TodosModule } from './modules/todos/todos.module';
+import { ContextModule } from '@common/context/context.module';
 
 @Module({
   imports: [
     ConfigModule,
+    ContextModule,
     PrismaModule,
     HealthCheckModule,
     UsersModule,
