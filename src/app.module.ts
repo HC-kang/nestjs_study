@@ -5,15 +5,12 @@ import { HttpExceptionFilter, HttpLoggerInterceptor } from './common';
 import { UsersModule } from './modules/users/users.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule } from '@common/config/config.module';
 import { TodosModule } from './modules/todos/todos.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      envFilePath: `.env.${process.env.NODE_ENV}`,
-      isGlobal: true,
-    }),
+    ConfigModule,
     PrismaModule,
     HealthCheckModule,
     UsersModule,
