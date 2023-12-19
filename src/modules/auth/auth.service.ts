@@ -1,5 +1,4 @@
 import { TOKEN_TYPE } from '@/common/resources';
-import { required } from '@/config';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -8,10 +7,14 @@ import { toSeconds } from '@/common/utils';
 import { AccessTokenPayload } from './dto/access-token-payload.dto';
 import { UserRole } from '@prisma/client';
 import { UNAUTHORIZED_USER } from '@/common/errors';
+import { ConfigService as NestConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private configService: NestConfigService,
+    private jwtService: JwtService,
+  ) {}
 
   async hashPassword(password: string): Promise<string> {
     const ROUNDS_OF_HASHING = 12;
@@ -30,7 +33,7 @@ export class AuthService {
     userId: string;
   }): Promise<TokenPayloadDto> {
     return new TokenPayloadDto({
-      expiresIn: toSeconds(required('JWT_EXPIRES_IN') as string),
+      expiresIn: toSeconds(this.jwtExpiresIn),
       accessToken: await this.jwtService.signAsync({
         userId: data.userId,
         type: TOKEN_TYPE.ACCESS_TOKEN,
@@ -44,5 +47,9 @@ export class AuthService {
   ): Promise<AccessTokenPayload | UNAUTHORIZED_USER> {
     const result = await this.jwtService.verify(token);
     return result;
+  }
+
+  private get jwtExpiresIn(): string {
+    return this.configService.get<string>('JWT_EXPIRES_IN') || '1h';
   }
 }

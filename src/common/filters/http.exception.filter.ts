@@ -1,4 +1,5 @@
-import { BadRequestException, Inject, Logger } from '@nestjs/common';
+import { BadRequestException, Inject } from '@nestjs/common';
+import { CustomLogger, LoggerKey } from '@/common/logger/interfaces';
 import {
   ArgumentsHost,
   Catch,
@@ -10,10 +11,7 @@ import { Request, Response } from 'express';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
-  constructor(
-    @Inject(Logger)
-    private readonly logger: Logger,
-  ) {}
+  constructor(@Inject(LoggerKey) private logger: CustomLogger) {}
 
   catch(exception: Error, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
