@@ -23,6 +23,7 @@ export class ConfigService {
 
   get awsLogOptions() {
     return {
+      AWS_LOG_REGION: this.configService.get<string>('AWS_LOG_REGION'),
       AWS_LOG_GROUP_NAME: this.configService.get<string>('AWS_LOG_GROUP_NAME'),
       AWS_LOG_STREAM_NAME: this.configService.get<string>(
         'AWS_LOG_STREAM_NAME',
@@ -33,7 +34,6 @@ export class ConfigService {
       AWS_LOG_SECRET_ACCESS_KEY: this.configService.get<string>(
         'AWS_LOG_SECRET_ACCESS_KEY',
       ),
-      AWS_LOG_REGION: this.configService.get<string>('AWS_LOG_REGION'),
     };
   }
 
