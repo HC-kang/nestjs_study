@@ -15,6 +15,7 @@ import {
   ConsoleTransport,
   FileTransport,
   SlackTransport,
+  cloudwatchHelper,
 } from './winston/transports';
 
 @Global()
@@ -43,7 +44,11 @@ import {
 
         transports.push(ConsoleTransport.createColorize());
 
-        transports.push(FileTransport.create());
+        transports.push(cloudwatchHelper(configService.awsLogOptions));
+
+        if (configService.isDevelopment) {
+          transports.push(FileTransport.create());
+        }
 
         if (configService.isProduction) {
           if (configService.slackWebhookUrl) {
