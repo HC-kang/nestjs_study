@@ -44,7 +44,9 @@ import {
 
         transports.push(ConsoleTransport.createColorize());
 
-        transports.push(cloudwatchHelper(configService.awsLogOptions));
+        if (!configService.isTest) {
+          transports.push(cloudwatchHelper(configService.awsLogOptions));
+        }
 
         if (configService.isDevelopment) {
           transports.push(FileTransport.create());
