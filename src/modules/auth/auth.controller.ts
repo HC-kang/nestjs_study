@@ -5,6 +5,7 @@ import { CallbackUserData } from './decorators/callback-user-data.decorator';
 import { CallbackUserDataDto } from './dto/callback-user-data.dto';
 import { KakaoAuthGuard } from './kakao/kakao-auth.guard';
 import { KakaoExceptionFilter } from './kakao/kakao-exception.filter';
+import { GoogleAuthGuard } from './google/google-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -14,6 +15,18 @@ export class AuthController {
   @UseGuards(KakaoAuthGuard)
   @UseFilters(KakaoExceptionFilter)
   async kakaoCallback(
+    @CallbackUserData() userData: CallbackUserDataDto,
+    @Res() res: Response,
+  ) {
+    const { access_token } = await this.authService.login(userData);
+
+    res.cookie('access_token', access_token, { httpOnly: false });
+    res.redirect('http://localhost:3000');
+  }
+
+  @Get('google/callback')
+  @UseGuards(GoogleAuthGuard)
+  async googleCallback(
     @CallbackUserData() userData: CallbackUserDataDto,
     @Res() res: Response,
   ) {

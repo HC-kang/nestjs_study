@@ -13,6 +13,8 @@ export class UsersRepository {
         email: model.email,
         name: model.name,
         password: model.password,
+        provider: model.provider,
+        providerId: model.providerId,
       },
     });
     return UserModel.fromEntity(user);

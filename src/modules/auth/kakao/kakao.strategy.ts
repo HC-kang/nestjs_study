@@ -62,8 +62,7 @@ export class KakaoStrategy extends PassportStrategy(Strategy) {
       return done(null, user);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { nickname, profileImage, thumbnailImage } = _.mapKeys(
+    const { _nickname, profileImage, thumbnailImage } = _.mapKeys(
       properties,
       (v, k) => {
         return _.camelCase(k);

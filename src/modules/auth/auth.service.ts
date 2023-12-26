@@ -8,7 +8,6 @@ import { AccessTokenPayload } from './dto/access-token-payload.dto';
 import { UserRole } from '@prisma/client';
 import { UNAUTHORIZED_USER } from '@/common/errors';
 import { ConfigService as NestConfigService } from '@nestjs/config';
-import { CallbackUserDataDto } from './dto/callback-user-data.dto';
 
 @Injectable()
 export class AuthService {

@@ -9,6 +9,8 @@ import { KakaoAuthGuard } from './kakao/kakao-auth.guard';
 import { HttpModule } from '@nestjs/axios';
 import { UsersService } from '../users/users.service';
 import { UsersRepository } from '../users/users.repository';
+import { GoogleStrategy } from './google/google.strategy';
+import { GoogleAuthGuard } from './google/google-auth.guard';
 
 @Module({
   imports: [
@@ -29,6 +31,8 @@ import { UsersRepository } from '../users/users.repository';
     AuthService,
     KakaoStrategy,
     KakaoAuthGuard,
+    GoogleStrategy,
+    GoogleAuthGuard,
     UsersService,
     UsersRepository,
   ],
