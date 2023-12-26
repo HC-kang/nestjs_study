@@ -53,7 +53,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
       timestamp: new Date().toISOString(),
       path: req.url,
     };
-    console.log(response);
 
     return res.status(status).json(response);
   }
