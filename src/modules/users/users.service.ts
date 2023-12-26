@@ -18,6 +18,21 @@ export class UsersService {
     private readonly usersRepository: UsersRepository,
   ) {}
 
+  async registerUserSSO({ email, name, provider, providerId }) {
+    const emailExists = await this.checkEmailExists(email);
+    if (emailExists) {
+      return ALREADY_EXIST_EMAIL;
+    }
+    const userModel = await this.usersRepository.create({
+      id: uuidv4(),
+      name,
+      email,
+      provider,
+      providerId,
+    } as UserModel);
+    return userModel.toUserWithoutPassword();
+  }
+
   async registerUser({
     email,
     name,
@@ -62,6 +77,20 @@ export class UsersService {
 
   async findOne(id: string): Promise<UserWithoutPassword | USER_NOT_FOUND> {
     const userModel = await this.usersRepository.findOne(id);
+    if (!userModel) {
+      return USER_NOT_FOUND;
+    }
+    return userModel.toUserWithoutPassword();
+  }
+
+  async findOneByProviderId(
+    provider: string,
+    providerId: string,
+  ): Promise<UserWithoutPassword | USER_NOT_FOUND> {
+    const userModel = await this.usersRepository.findOneByProviderId(
+      provider,
+      providerId,
+    );
     if (!userModel) {
       return USER_NOT_FOUND;
     }

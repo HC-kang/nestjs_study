@@ -8,6 +8,7 @@ import { AccessTokenPayload } from './dto/access-token-payload.dto';
 import { UserRole } from '@prisma/client';
 import { UNAUTHORIZED_USER } from '@/common/errors';
 import { ConfigService as NestConfigService } from '@nestjs/config';
+import { CallbackUserDataDto } from './dto/callback-user-data.dto';
 
 @Injectable()
 export class AuthService {
@@ -51,5 +52,13 @@ export class AuthService {
 
   private get jwtExpiresIn(): string {
     return this.configService.get<string>('JWT_EXPIRES_IN') || '1h';
+  }
+
+  async login(userData: any) {
+    const { provider, providerId, email } = userData;
+    const payload = { provider, providerId, email };
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
   }
 }

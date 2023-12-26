@@ -5,9 +5,11 @@ export type UserWithoutPassword = Omit<User, 'password'>;
 
 export class UserModel {
   id: string;
+  provider: string;
+  providerId?: string;
   email: string;
   name: string;
-  password: string;
+  password?: string;
   role: UserRole;
   status: UserStatus;
   emailVerifiedAt: Date | null;
@@ -15,6 +17,8 @@ export class UserModel {
   static fromEntity(entity: User): UserModel {
     const userModel = new UserModel();
     userModel.id = entity.id;
+    userModel.provider = entity.provider;
+    userModel.providerId = entity.providerId;
     userModel.email = entity.email;
     userModel.name = entity.name;
     userModel.password = entity.password;
@@ -27,6 +31,8 @@ export class UserModel {
   toEntity(): UserEntity {
     const userEntity = new UserEntity({
       id: this.id,
+      provider: this.provider,
+      providerId: this.providerId,
       email: this.email,
       name: this.name,
       password: this.password,
@@ -40,6 +46,8 @@ export class UserModel {
   toUserWithoutPassword(): UserWithoutPassword {
     return {
       id: this.id,
+      provider: this.provider,
+      providerId: this.providerId,
       email: this.email,
       name: this.name,
       role: this.role,

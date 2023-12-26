@@ -41,6 +41,20 @@ export class UsersRepository {
     return user ? UserModel.fromEntity(user) : null;
   }
 
+  async findOneByProviderId(
+    provider: string,
+    providerId: string,
+  ): Promise<UserModel | null> {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        provider,
+        providerId,
+        deletedAt: null,
+      },
+    });
+    return user ? UserModel.fromEntity(user) : null;
+  }
+
   async findByEmail(email: string): Promise<UserModel | null> {
     const user = await this.prisma.user.findFirst({
       where: {
