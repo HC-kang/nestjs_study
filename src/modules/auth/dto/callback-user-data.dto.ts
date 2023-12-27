@@ -1,7 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsString, IsUrl } from 'class-validator';
+import { UserRole } from '@prisma/client';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUrl,
+} from 'class-validator';
 
 export class CallbackUserDataDto {
+  @IsString()
+  @IsOptional()
+  public userId: string;
+
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
@@ -76,4 +87,8 @@ export class CallbackUserDataDto {
     required: true,
   })
   public refreshToken: string;
+
+  @IsString()
+  @IsOptional()
+  public role: UserRole;
 }

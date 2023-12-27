@@ -31,7 +31,10 @@ export class AuthService {
   async createAccessToken(data: {
     role: UserRole;
     userId: string;
+    provider: string;
+    providerId?: string;
   }): Promise<TokenPayloadDto> {
+    console.log('data', data);
     return new TokenPayloadDto({
       expiresIn: toSeconds(this.jwtExpiresIn),
       accessToken: await this.jwtService.signAsync({
@@ -57,7 +60,7 @@ export class AuthService {
     const { provider, providerId, email } = userData;
     const payload = { provider, providerId, email };
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token: await this.jwtService.signAsync(payload),
     };
   }
 }

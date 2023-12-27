@@ -33,7 +33,6 @@ export class KakaoStrategy extends PassportStrategy(Strategy) {
       }
 
       const response = await this.httpService.axiosRef.post(
-        // https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#req-user-info
         'https://kapi.kakao.com/v2/user/me',
         'property_keys=["kakao_account.profile","kakao_account.email"]',
         {
@@ -59,7 +58,7 @@ export class KakaoStrategy extends PassportStrategy(Strategy) {
       providerId,
     );
     if (!isErrorGuard(user)) {
-      return done(null, user);
+      return done(null, { userId: user.id, ...user });
     }
 
     const { _nickname, profileImage, thumbnailImage } = _.mapKeys(
@@ -81,7 +80,14 @@ export class KakaoStrategy extends PassportStrategy(Strategy) {
       accessToken,
       refreshToken,
     };
-    await this.usersService.registerUserSSO(userData);
-    done(null, userData);
+    const registeredUser = await this.usersService.registerUserSSO(userData);
+    if (isErrorGuard(registeredUser)) {
+      return done(registeredUser, null);
+    }
+    done(null, {
+      role: registeredUser.role,
+      userId: registeredUser.id,
+      ...userData,
+    });
   }
 }

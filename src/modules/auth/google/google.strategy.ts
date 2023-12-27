@@ -20,7 +20,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(accessToken, refreshToken, profile, cb) {
+  async validate(accessToken, refreshToken, profile, done) {
     const {
       id: providerId,
       displayName,
@@ -36,7 +36,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
       providerId,
     );
     if (!isErrorGuard(user)) {
-      return cb(null, user);
+      return done(null, { userId: user.id, ...user });
     }
 
     const [{ value: email, _verified }] = emails;
@@ -52,7 +52,14 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
       accessToken,
       refreshToken,
     };
-    await this.usersService.registerUserSSO(userData);
-    cb(null, userData);
+    const registeredUser = await this.usersService.registerUserSSO(userData);
+    if (isErrorGuard(registeredUser)) {
+      return done(registeredUser, null);
+    }
+    done(null, {
+      role: registeredUser.role,
+      userId: registeredUser.id,
+      ...userData,
+    });
   }
 }

@@ -66,6 +66,8 @@ export class UsersService {
     const token = await this.authService.createAccessToken({
       role: userModel.role as UserRole,
       userId: userModel.id,
+      provider: userModel.provider,
+      providerId: userModel.providerId,
     });
     return token;
   }

@@ -6,10 +6,14 @@ import { CallbackUserDataDto } from './dto/callback-user-data.dto';
 import { KakaoAuthGuard } from './kakao/kakao-auth.guard';
 import { KakaoExceptionFilter } from './kakao/kakao-exception.filter';
 import { GoogleAuthGuard } from './google/google-auth.guard';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly config: ConfigService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Get('kakao/callback')
   @UseGuards(KakaoAuthGuard)
@@ -18,10 +22,12 @@ export class AuthController {
     @CallbackUserData() userData: CallbackUserDataDto,
     @Res() res: Response,
   ) {
-    const { access_token } = await this.authService.login(userData);
+    console.log('userData', userData);
+    const { accessToken } = await this.authService.createAccessToken(userData);
+    // const { access_token } = await this.authService.login(userData);
 
-    res.cookie('access_token', access_token, { httpOnly: false });
-    res.redirect('http://localhost:3000');
+    res.cookie('access_token', accessToken, { httpOnly: false });
+    res.redirect(this.config.getOrThrow<string>('FRONTEND_URL'));
   }
 
   @Get('google/callback')
@@ -30,9 +36,10 @@ export class AuthController {
     @CallbackUserData() userData: CallbackUserDataDto,
     @Res() res: Response,
   ) {
-    const { access_token } = await this.authService.login(userData);
+    const { accessToken } = await this.authService.createAccessToken(userData);
+    // const { access_token } = await this.authService.login(userData);
 
-    res.cookie('access_token', access_token, { httpOnly: false });
-    res.redirect('http://localhost:3000');
+    res.cookie('access_token', accessToken, { httpOnly: false });
+    res.redirect(this.config.getOrThrow<string>('FRONTEND_URL'));
   }
 }
