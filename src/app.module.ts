@@ -9,6 +9,8 @@ import { TodosModule } from '@/modules/todos/todos.module';
 import { ConfigModule } from '@/common/config/config.module';
 import { ContextModule } from '@/common/context/context.module';
 import { LoggerModule } from '@/common/logger/logger.module';
+import { GptModule } from './modules/gpt/gpt.module';
+import { UploadModule } from './modules/upload/upload.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { LoggerModule } from '@/common/logger/logger.module';
     UsersModule,
     AuthModule,
     TodosModule,
+    GptModule,
+    UploadModule,
   ],
   providers: [
     {
